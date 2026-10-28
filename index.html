@@ -1,0 +1,1458 @@
+<title>마음톡 연습실</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap">
+<style>
+/* Layout: 사탕 상자 같은 한 화면 앱. 파스텔 바탕에 동글동글한 카드, 탭마다 다른 사탕 색. 말 만들기는 AAC 피츠제럴드 색 체계 유지 */
+:root{
+  --bg:#fff5f0; --surface:#ffffff; --surface-2:#fdf0f5; --ink:#3b2d4d; --muted:#7a6a8c; --line:#f2dde8;
+  --accent:#e0508a; --accent-ink:#ffffff; --accent-soft:#ffe1ec; --sun:#ffcf4d; --mint:#7fd6bb; --sky:#8ec5ff; --lilac:#c6a8ff; --peach:#ffb48a;
+  --ok:#23885c; --ok-bg:#e2f6ec; --warn:#c2621c; --warn-bg:#fff0e0;
+  --dot1:#ffd9e6; --dot2:#d9f3ea; --dot3:#e6ddff; --shadow:59,45,77;
+  --e-joy:#ffcf4d; --e-calm:#7fd6a0; --e-worry:#b9a0f2; --e-sad:#7fb2ee; --e-angry:#f47c6a;
+  --fk-people:#fde68f; --fk-verb:#bfe8b5; --fk-desc:#bfdcfa; --fk-social:#fbcde0; --fk-noun:#fdd6ad; --fk-ink:#2b2236;
+  --display:"Jua","Gowun Dodum",system-ui,sans-serif;
+  --body:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --r:22px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#211a2c; --surface:#2c2340; --surface-2:#382d52; --ink:#f8effe; --muted:#c3b4d8; --line:#4a3d66;
+  --accent:#ff8fb8; --accent-ink:#2b0f1e; --accent-soft:#4a2a44; --ok:#7fe0b0; --ok-bg:#1f3b31; --warn:#ffb072; --warn-bg:#43301f;
+  --dot1:#3a2a44; --dot2:#24363a; --dot3:#2f2a4a; --shadow:0,0,0; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#211a2c; --surface:#2c2340; --surface-2:#382d52; --ink:#f8effe; --muted:#c3b4d8; --line:#4a3d66;
+  --accent:#ff8fb8; --accent-ink:#2b0f1e; --accent-soft:#4a2a44; --ok:#7fe0b0; --ok-bg:#1f3b31; --warn:#ffb072; --warn-bg:#43301f;
+  --dot1:#3a2a44; --dot2:#24363a; --dot3:#2f2a4a; --shadow:0,0,0; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.55;word-break:keep-all;overflow-wrap:anywhere}
+.wrap{max-width:980px;margin:0 auto;padding-block:16px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);font-weight:400;letter-spacing:.01em;text-wrap:balance;margin:0}
+h1{font-size:30px}h2{font-size:26px}h3{font-size:21px}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,input:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px}
+.brand small{display:block;font-size:13px;color:var(--muted);font-family:var(--body)}
+.coins{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 14px 6px 8px}
+.coin{width:30px;height:30px;border-radius:50%;background:var(--sun);display:grid;place-items:center;font-family:var(--display);color:#3b2c00;font-size:15px;box-shadow:inset 0 -3px 0 rgba(0,0,0,.12)}
+.goal{width:120px;height:10px;border-radius:6px;background:var(--surface-2);overflow:hidden}
+.goal i{display:block;height:100%;background:var(--sun);transition:width .4s}
+.coins span{font-size:14px;color:var(--muted);white-space:nowrap}
+.icon-btn{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--surface);border:1px solid var(--line)}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-block:18px}
+.tab{min-height:64px;border-radius:var(--r);background:var(--surface);border:2px solid var(--line);font-family:var(--display);font-size:19px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px}
+.tab svg{width:24px;height:24px}
+.tab[aria-selected="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+@media (max-width:520px){.tab{font-size:15px}.goal{width:70px}h1{font-size:25px}}
+.panel{display:grid;gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.lead{color:var(--muted);font-size:16px}
+/* 감정 얼굴 */
+.faces{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.face-btn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border-radius:var(--r);border:3px solid transparent;background:var(--surface-2);min-height:120px}
+.face-btn svg{width:64px;height:64px;max-width:100%}
+.face-btn[aria-pressed="true"]{border-color:var(--accent);background:var(--surface)}
+.face-btn b{font-weight:500;font-size:16px}
+@media (max-width:520px){.faces{grid-template-columns:repeat(3,1fr)}}
+/* 온도계 */
+.thermo{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.thermo button{min-height:58px;border-radius:10px;border:2px solid var(--line);background:var(--surface-2);font-family:var(--display);font-size:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1}
+.thermo button small{font-family:var(--body);font-size:12px;color:var(--muted)}
+.thermo button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:var(--accent-ink)}
+.thermo button[aria-pressed="true"] small{color:inherit}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:48px;padding:8px 16px;border-radius:999px;border:2px solid var(--line);background:var(--surface-2);font-size:17px}
+.chip[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:var(--accent-ink)}
+.btn{min-height:56px;padding:10px 22px;border-radius:var(--r);background:var(--accent);color:var(--accent-ink);font-family:var(--display);font-size:20px;display:inline-flex;align-items:center;gap:8px;justify-content:center}
+.btn.ghost{background:var(--surface-2);color:var(--ink);border:2px solid var(--line)}
+.btn.sun{background:var(--sun);color:#3b2c00}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.week{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.day{background:var(--surface-2);border-radius:12px;padding:10px 6px;text-align:center;font-size:14px;color:var(--muted)}
+.day svg{width:40px;height:40px;display:block;margin:4px auto}
+.day b{display:block;color:var(--ink);font-weight:500}
+.tag{display:inline-block;font-size:12px;letter-spacing:.04em;padding:2px 8px;border-radius:6px;background:var(--surface-2);color:var(--muted)}
+/* 상황 목록 */
+.levels{display:flex;gap:8px;flex-wrap:wrap}
+.scen-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.scen{text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:var(--r);padding:16px;display:grid;gap:8px;min-height:150px;align-content:start}
+.scen:hover{border-color:var(--accent)}
+.scen .meta{display:flex;gap:6px;flex-wrap:wrap}
+.scen h3{font-size:20px}
+.scen p{font-size:15px;color:var(--muted)}
+.done-mark{color:var(--ok);font-size:14px;font-weight:500}
+.lv{font-size:12px;padding:2px 8px;border-radius:6px;font-weight:500}
+.lv1{background:var(--ok-bg);color:var(--ok)}.lv2{background:var(--fk-desc);color:var(--fk-ink)}.lv3{background:var(--warn-bg);color:var(--warn)}
+/* 시나리오 플레이어 */
+.steps{display:flex;gap:6px;align-items:center;font-size:14px;color:var(--muted);flex-wrap:wrap}
+.steps span{padding:4px 10px;border-radius:999px;background:var(--surface-2)}
+.steps span.on{background:var(--accent);color:var(--accent-ink)}
+.comic{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:640px){.comic{grid-template-columns:1fr}}
+.frame{border:2px solid var(--ink);border-radius:10px;padding:14px;background:var(--surface);display:grid;gap:10px;align-content:start;position:relative;min-width:0}
+.frame .n{position:absolute;top:-12px;left:10px;background:var(--ink);color:var(--bg);font-family:var(--display);width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:15px}
+.frame .pic{height:128px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center}
+.frame .pic svg{height:116px;width:auto;max-width:100%}
+.frame p{font-size:18px}
+.speak{display:inline-flex;align-items:center;gap:6px;font-size:15px;color:var(--accent);font-weight:500;min-height:40px}
+.speak svg{width:20px;height:20px}
+.q{font-family:var(--display);font-size:24px}
+.opts{display:grid;gap:10px}
+.opt{text-align:left;min-height:64px;padding:14px 18px;border-radius:var(--r);border:2px solid var(--line);background:var(--surface);font-size:19px;display:flex;align-items:center;gap:12px}
+.opt:hover{border-color:var(--accent)}
+.opt .k{flex:none;width:34px;height:34px;border-radius:50%;background:var(--surface-2);display:grid;place-items:center;font-family:var(--display)}
+.opt.tried{opacity:.5;border-style:dashed}
+.opt.right{border-color:var(--ok);background:var(--ok-bg)}
+.fb{border-radius:var(--r);padding:16px 18px;display:grid;gap:6px}
+.fb.ok{background:var(--ok-bg);color:var(--ink);border:2px solid var(--ok)}
+.fb.retry{background:var(--warn-bg);border:2px solid var(--warn)}
+.fb b{font-family:var(--display);font-weight:400;font-size:21px}
+.hint{background:var(--surface-2);border-radius:var(--r);padding:14px 18px;border:2px dashed var(--line)}
+.model{font-family:var(--display);font-size:28px;line-height:1.3;padding:18px;border-radius:var(--r);background:var(--surface-2);text-align:center}
+.prompt-lv{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.prompt-lv button{min-height:64px;border-radius:12px;border:2px solid var(--line);background:var(--surface-2);font-size:16px;padding:6px;line-height:1.3}
+.prompt-lv button b{display:block;font-family:var(--display);font-weight:400;font-size:19px}
+@media (max-width:520px){.prompt-lv{grid-template-columns:1fr}}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:12px 20px;border-radius:999px;font-size:17px;z-index:20;max-width:calc(100% - 32px);text-align:center}
+/* AAC */
+.strip{min-height:84px;border:3px solid var(--ink);border-radius:var(--r);background:var(--surface);display:flex;flex-wrap:wrap;gap:8px;padding:10px;align-items:center}
+.strip:empty::before{content:"아래 낱말을 눌러 문장을 만들어요";color:var(--muted);font-size:16px}
+.strip .w{padding:8px 14px;border-radius:10px;font-size:20px;color:var(--fk-ink);font-weight:500}
+.aac-cat{display:grid;gap:8px}
+.aac-cat h3{font-size:17px;font-family:var(--body);font-weight:500;color:var(--muted);display:flex;align-items:center;gap:8px}
+.aac-cat h3 i{width:14px;height:14px;border-radius:4px;display:inline-block}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px}
+.tile{min-height:70px;border-radius:12px;color:var(--fk-ink);font-size:19px;font-weight:500;padding:8px;border:2px solid rgba(0,0,0,.08);box-shadow:0 3px 0 rgba(0,0,0,.1)}
+.tile:active{transform:translateY(2px);box-shadow:none}
+.c-people{background:var(--fk-people)}.c-verb{background:var(--fk-verb)}.c-desc{background:var(--fk-desc)}.c-social{background:var(--fk-social)}.c-noun{background:var(--fk-noun)}
+/* 교사용 */
+.tbl-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:16px}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line)}
+th{font-size:13px;color:var(--muted);font-weight:500;letter-spacing:.03em}
+td.num{font-variant-numeric:tabular-nums}
+.bar{height:8px;border-radius:4px;background:var(--surface-2);width:90px;overflow:hidden;display:inline-block;vertical-align:middle;margin-right:6px}
+.bar i{display:block;height:100%;background:var(--accent)}
+.pill{font-size:13px;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.p-ind{background:var(--ok-bg);color:var(--ok)}.p-part{background:var(--fk-desc);color:var(--fk-ink)}.p-full{background:var(--warn-bg);color:var(--warn)}.p-none{background:var(--surface-2);color:var(--muted)}
+.log{display:grid;gap:6px;font-size:15px}
+.log div{display:flex;gap:10px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line)}
+.log time{color:var(--muted);font-variant-numeric:tabular-nums;min-width:86px}
+.notice{font-size:14px;color:var(--warn);background:var(--warn-bg);border-radius:10px;padding:8px 12px}
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.stat{background:var(--surface-2);border-radius:12px;padding:12px 14px}
+.stat b{font-family:var(--display);font-size:30px;font-weight:400;display:block;font-variant-numeric:tabular-nums}
+.stat span{font-size:14px;color:var(--muted)}
+input[type=text]{font:inherit;min-height:48px;padding:8px 12px;border-radius:10px;border:2px solid var(--line);background:var(--surface);color:var(--ink);width:100%;max-width:260px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.cardno{min-width:28px;height:28px;padding:0 6px;border-radius:8px;background:var(--ink);color:var(--bg);font-family:var(--display);font-size:16px;display:inline-grid;place-items:center}
+.cardno.big{width:72px;height:72px;font-size:40px;border-radius:18px;justify-self:center}
+.numpad-card{display:grid;gap:12px}
+.numpad{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.numpad button{min-height:56px;border-radius:12px;background:var(--surface-2);border:2px solid var(--line);font-family:var(--display);font-size:24px}
+.numpad button:hover{border-color:var(--accent)}
+.back-card{display:grid;gap:16px;text-align:center;justify-items:center;padding-block:32px}
+.back-coins{display:flex;gap:10px;justify-content:center}
+.back-coins .coin{width:64px;height:64px;font-size:22px}
+.who{display:grid;gap:8px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.who h3{font-size:19px}
+.chip.big{min-height:64px;padding:10px 26px;font-size:22px;font-family:var(--display)}
+.chip.static{cursor:default;background:var(--surface)}
+.calm-box{background:var(--warn-bg);border:2px solid var(--warn);border-radius:var(--r);padding:16px 18px;display:grid;gap:10px}
+.calm-box b{font-family:var(--display);font-weight:400;font-size:21px}
+.care{background:var(--warn-bg);border-radius:var(--r);padding:12px 16px;display:grid;gap:4px;font-size:15px}
+.care>b{font-family:var(--display);font-weight:400;font-size:19px;color:var(--warn)}
+.care div{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.care svg{width:26px;height:26px}
+.care time{color:var(--muted);font-variant-numeric:tabular-nums}
+.vote-note{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--surface-2);border-radius:var(--r);padding:12px 16px}
+.vote-note b{font-family:var(--display);font-weight:400;font-size:20px}
+.vote-note p{font-size:15px;color:var(--muted)}
+
+/* ===== 화사한 사탕 테마 ===== */
+body{background-color:var(--bg);background-image:radial-gradient(var(--dot1) 2.5px,transparent 3px),radial-gradient(var(--dot2) 2.5px,transparent 3px),radial-gradient(var(--dot3) 2px,transparent 2.5px);background-size:46px 46px,46px 46px,46px 46px;background-position:0 0,23px 23px,11px 34px;font-size:18.5px}
+h1{font-size:32px;letter-spacing:0}
+.brand .mascot{width:62px;height:62px;flex:none;animation:bob 3.2s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-4px) rotate(2deg)}}
+.brand h1 .hi{color:var(--accent)}
+.brand small{font-size:14px}
+.coins{border:0;box-shadow:0 4px 0 rgba(var(--shadow),.06),0 8px 20px rgba(var(--shadow),.08);padding:7px 16px 7px 8px}
+.coin{background:radial-gradient(circle at 35% 30%,#fff3b8 0 18%,var(--sun) 19% 70%,#f2b62e 71%);color:#5a3d00;box-shadow:0 2px 0 #d99a1c}
+.goal{height:12px;background:var(--surface-2)}
+.goal i{background:repeating-linear-gradient(-45deg,var(--sun) 0 8px,#ffe08a 8px 16px);border-radius:6px}
+.icon-btn{border:0;border-radius:16px;box-shadow:0 4px 0 rgba(var(--shadow),.06),0 8px 20px rgba(var(--shadow),.08)}
+.tabs{gap:10px}
+.tab{border:0;border-radius:24px;box-shadow:0 5px 0 rgba(var(--shadow),.07);background:var(--surface);min-height:76px;gap:4px;transition:transform .15s}
+.tab:hover{transform:translateY(-2px)}
+.tab svg{width:34px;height:34px;padding:6px;border-radius:50%;background:var(--tc-soft)}
+.tab[data-tab="checkin"]{--tc:#ffcf4d;--tc-soft:#fff3c7;--tc-ink:#5a3d00}
+.tab[data-tab="practice"]{--tc:#ff9fbf;--tc-soft:#ffe3ec;--tc-ink:#5a1530}
+.tab[data-tab="aac"]{--tc:#7fd6bb;--tc-soft:#dcf6ee;--tc-ink:#0f4436}
+.tab[data-tab="teacher"]{--tc:#c6a8ff;--tc-soft:#efe7ff;--tc-ink:#33186a}
+.tab[aria-selected="true"]{background:var(--tc);color:var(--tc-ink);box-shadow:0 5px 0 rgba(var(--shadow),.14)}
+.tab[aria-selected="true"] svg{background:rgba(255,255,255,.55)}
+.card{border:0;border-radius:28px;padding:24px;box-shadow:0 6px 0 rgba(var(--shadow),.05),0 14px 32px rgba(var(--shadow),.07)}
+.lead{font-size:16.5px}
+.face-btn{border-radius:24px;background:var(--surface-2);border:3px solid transparent;transition:transform .15s}
+.face-btn:hover{transform:translateY(-3px) rotate(-1.5deg)}
+.face-btn[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);transform:scale(1.04)}
+.face-btn svg{filter:drop-shadow(0 3px 0 rgba(var(--shadow),.12))}
+.thermo button{border:0;border-radius:16px;box-shadow:inset 0 -4px 0 rgba(var(--shadow),.06)}
+.thermo button:nth-child(1){background:#d8f3e2}.thermo button:nth-child(2){background:#e9f5c9}.thermo button:nth-child(3){background:#fff1bf}.thermo button:nth-child(4){background:#ffdcbf}.thermo button:nth-child(5){background:#ffcfc8}
+.thermo button{color:#3b2d4d}.thermo button small{color:#6d5c80}
+.thermo button[aria-pressed="true"]{outline:4px solid var(--accent);outline-offset:2px;background-color:inherit;color:#3b2d4d}
+.chip{border:2px solid var(--line);background:var(--surface)}
+.chip[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:var(--accent-ink)}
+.btn{border-radius:999px;box-shadow:0 5px 0 #b5336a;padding:10px 28px;transition:transform .1s,box-shadow .1s}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #b5336a}
+.btn.ghost{border:2px solid var(--line);background:var(--surface);box-shadow:0 4px 0 rgba(var(--shadow),.08)}
+.btn.sun{box-shadow:0 5px 0 #e0a816}
+.day{border-radius:20px;background:var(--surface-2)}
+.tag{border-radius:999px;padding:3px 10px}
+.lv{border-radius:999px;padding:3px 10px}
+.lv1{background:#d9f5e8;color:#1b6b48}.lv2{background:#dbeaff;color:#1f4f8c}.lv3{background:#ffe6d4;color:#9a4612}
+.scen{border:0;border-radius:24px;box-shadow:0 5px 0 rgba(var(--shadow),.06),0 10px 24px rgba(var(--shadow),.06);transition:transform .15s}
+.scen:hover{transform:translateY(-3px)}
+.scen:nth-child(4n+1){background:linear-gradient(var(--surface),var(--surface)) padding-box;border-top:8px solid #ffcf4d}
+.scen:nth-child(4n+2){border-top:8px solid #ff9fbf}
+.scen:nth-child(4n+3){border-top:8px solid #7fd6bb}
+.scen:nth-child(4n+4){border-top:8px solid #8ec5ff}
+.cardno{border-radius:12px;background:var(--accent);color:var(--accent-ink)}
+.numpad button{border:0;border-radius:18px;box-shadow:inset 0 -4px 0 rgba(var(--shadow),.07)}
+.numpad button:nth-child(3n+1){background:#fff3c7;color:#5a3d00}.numpad button:nth-child(3n+2){background:#ffe3ec;color:#5a1530}.numpad button:nth-child(3n){background:#dcf6ee;color:#0f4436}
+.steps span{border-radius:999px;background:var(--surface-2)}
+.steps span.on{background:var(--accent);color:var(--accent-ink)}
+.frame{border:3px solid var(--line);border-radius:24px;background:var(--surface)}
+.frame:nth-child(1){border-color:#ffd97a}.frame:nth-child(2){border-color:#ffb3cc}.frame:nth-child(3){border-color:#9fe0c9}
+.frame .n{background:var(--accent);color:var(--accent-ink);width:30px;height:30px;top:-14px}
+.frame .pic{border-radius:18px}
+.frame:nth-child(1) .pic{background:#fff6d9}.frame:nth-child(2) .pic{background:#ffeef4}.frame:nth-child(3) .pic{background:#e7f8f1}
+.speak{color:var(--accent)}
+.q{font-size:26px}
+.opt{border:0;border-radius:22px;box-shadow:0 4px 0 rgba(var(--shadow),.07),0 8px 20px rgba(var(--shadow),.05);transition:transform .12s}
+.opt:hover{transform:translateX(4px)}
+.opt .k{width:40px;height:40px;font-size:20px;color:#3b2d4d}
+.opt:nth-child(1) .k{background:#bfe0dc}.opt:nth-child(2) .k{background:#fde9a6}.opt:nth-child(3) .k{background:#f9d3e0}
+.fb,.hint,.model,.vote-note,.calm-box,.care,.stat{border-radius:22px}
+.fb.ok{border:0;background:var(--ok-bg);box-shadow:inset 0 0 0 3px var(--ok)}
+.fb.retry{border:0;background:var(--warn-bg);box-shadow:inset 0 0 0 3px var(--warn)}
+.model{background:linear-gradient(135deg,#fff3c7,#ffe3ec 55%,#e3f3ff);color:#3b2d4d;font-size:30px;box-shadow:0 5px 0 rgba(var(--shadow),.06)}
+.prompt-lv button{border:0;border-radius:18px;background:var(--surface-2)}
+.prompt-lv button:nth-child(1){background:#dcf6ee;color:#0f4436}.prompt-lv button:nth-child(2){background:#dbeaff;color:#1f4f8c}.prompt-lv button:nth-child(3){background:#fff0e0;color:#7a3b0e}
+.toast{background:var(--accent);color:var(--accent-ink);box-shadow:0 6px 0 rgba(var(--shadow),.15);font-family:var(--display);font-size:19px}
+.strip{border:3px dashed var(--accent);border-radius:24px}
+.strip .w{border-radius:14px;box-shadow:0 3px 0 rgba(0,0,0,.08)}
+.tile{border-radius:18px;border:0;box-shadow:0 4px 0 rgba(0,0,0,.1)}
+.back-coins .coin{width:72px;height:72px;font-size:24px}
+.who{border-bottom:2px dashed var(--line)}
+.vote-note{background:linear-gradient(135deg,var(--surface-2),var(--accent-soft))}
+.sparkle{position:absolute;pointer-events:none}
+.back-card{position:relative;overflow:hidden}
+.back-card::before,.back-card::after{content:"";position:absolute;width:160px;height:160px;border-radius:50%;opacity:.35;z-index:0}
+.back-card::before{background:#ffd97a;top:-50px;left:-40px}
+.back-card::after{background:#9fe0c9;bottom:-60px;right:-40px}
+.back-card>*{position:relative;z-index:1}
+input[type=text]{border-radius:14px}
+@media (max-width:520px){.tab{min-height:68px;font-size:15px}.tab svg{width:30px;height:30px}h1{font-size:26px}.brand .mascot{width:50px;height:50px}}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .tab:not([aria-selected="true"]) svg{background:var(--surface-2)}}
+:root[data-theme="dark"] .tab:not([aria-selected="true"]) svg{background:var(--surface-2)}
+/* 휴대폰: 표를 카드로, 번호 버튼은 5칸 */
+@media (max-width:600px){
+  .tbl-wrap{overflow:visible}
+  table{min-width:0;display:block}
+  thead{display:none}
+  tbody{display:grid;gap:10px}
+  tr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 12px;background:var(--surface-2);border-radius:18px;padding:12px 14px}
+  td{border:0;padding:0;display:flex;flex-direction:column;gap:2px;min-width:0}
+  td.sk{grid-column:1/-1;font-family:var(--display);font-size:19px}
+  td[data-label]::before{content:attr(data-label);font-size:12px;color:var(--muted);font-family:var(--body)}
+  td .bar{width:70px}
+  .numpad{grid-template-columns:repeat(auto-fill,minmax(52px,1fr))}
+}
+/* 혼자 연습 */
+.stamps{display:flex;gap:14px;flex-wrap:wrap}
+.stamp{width:92px;height:92px;border-radius:50%;border:4px dashed var(--line);display:grid;place-items:center;font-family:var(--display);font-size:30px;color:var(--muted);background:var(--surface-2)}
+.stamp span{text-align:center;line-height:1.1}
+.stamp.on{border:4px solid #d23a6f;color:#d23a6f;background:#ffe3ec;font-size:17px;transform:rotate(-10deg)}
+.stamp.big{width:150px;height:150px;font-size:26px;justify-self:center}
+.mlist{display:grid;gap:12px}
+.mcard{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;text-align:left;padding:16px 18px;border-radius:22px;background:var(--surface);box-shadow:0 4px 0 rgba(var(--shadow),.07),0 8px 20px rgba(var(--shadow),.05);min-height:84px}
+.mcard:disabled{opacity:.5;cursor:not-allowed}
+.mcard.ok{background:var(--ok-bg)}
+.mcard .cardno.big2{width:52px;height:52px;font-size:26px;border-radius:16px}
+.mtxt{display:grid;gap:2px;min-width:0}.mtxt b{font-family:var(--display);font-weight:400;font-size:22px}.mtxt small{font-size:14px;color:var(--muted)}
+.mstate{font-family:var(--display);font-size:18px;color:var(--accent);white-space:nowrap}
+.mcard.ok .mstate{color:var(--ok)}
+.solo-ctl{display:grid;gap:10px;background:var(--surface-2);border-radius:20px;padding:14px 16px}
+.solo-ctl b{font-family:var(--display);font-weight:400;font-size:19px}
+.solo-sum{display:flex;gap:6px;flex-wrap:wrap}
+@keyframes pop{0%{transform:scale(.6)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.pop{animation:pop .45s ease-out}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <svg class="mascot" viewBox="0 0 64 64" aria-hidden="true"><path d="M50 6 l1.6 3.6 3.6 1.6 -3.6 1.6 -1.6 3.6 -1.6 -3.6 -3.6 -1.6 3.6 -1.6z" fill="#ffcf4d"/><circle cx="9" cy="16" r="2.4" fill="#7fd6bb"/><path d="M12 18 h34 a12 12 0 0 1 12 12 v8 a12 12 0 0 1 -12 12 h-16 l-9 8 v-8 h-9 a12 12 0 0 1 -12 -12 v-8 a12 12 0 0 1 12 -12z" fill="#ffb3cc" stroke="#3b2d4d" stroke-width="2.5" stroke-linejoin="round"/><circle cx="21" cy="33" r="3" fill="#3b2d4d"/><circle cx="37" cy="33" r="3" fill="#3b2d4d"/><circle cx="22" cy="32" r="1" fill="#ffffff"/><circle cx="38" cy="32" r="1" fill="#ffffff"/><ellipse cx="15" cy="39" rx="4" ry="2.5" fill="#ff7fa8" opacity=".7"/><ellipse cx="43" cy="39" rx="4" ry="2.5" fill="#ff7fa8" opacity=".7"/><path d="M25 39 q4 4 8 0" stroke="#3b2d4d" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+      <div><h1>마음톡 <span class="hi">연습실</span></h1><small>마음을 말로 전하는 연습 · 사회정서학습</small></div>
+    </div>
+    <div class="row">
+      <div class="coins" title="우리 반 마음 코인">
+        <div class="coin" id="coinNum">0</div>
+        <div><span id="goalTxt">동네 축제까지</span><div class="goal"><i id="goalBar" style="width:0%"></i></div></div>
+      </div>
+      <button class="icon-btn" id="soundBtn" aria-label="소리 켜기/끄기" aria-pressed="true"></button>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab" role="tab" data-tab="checkin" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/><path d="M8 15c2 2 6 2 8 0"/></svg>오늘 기분</button>
+    <button class="tab" role="tab" data-tab="practice" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="8" height="7" rx="1.5"/><rect x="13" y="4" width="8" height="7" rx="1.5"/><rect x="3" y="13" width="18" height="7" rx="1.5"/></svg>상황 연습</button>
+    <button class="tab" role="tab" data-tab="aac" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16v10H9l-5 4z"/></svg>말 만들기</button>
+    <button class="tab" role="tab" data-tab="teacher" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>교사용</button>
+  </nav>
+
+  <main id="view" class="panel"></main>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+/* ---------- 데이터 ---------- */
+const EMO = {
+  joy:{name:'기뻐요',color:'var(--e-joy)',mouth:'M20 38 Q32 50 44 38'},
+  calm:{name:'편안해요',color:'var(--e-calm)',mouth:'M22 40 Q32 45 42 40'},
+  worry:{name:'걱정돼요',color:'var(--e-worry)',mouth:'M22 42 Q27 38 32 42 Q37 46 42 42',brow:'worry'},
+  sad:{name:'속상해요',color:'var(--e-sad)',mouth:'M22 44 Q32 36 42 44',brow:'sad'},
+  angry:{name:'화나요',color:'var(--e-angry)',mouth:'M22 43 L42 43',brow:'angry'},
+  unfair:{name:'억울해요',color:'#e89a6c',mouth:'M24 44 Q28 40 32 43 Q36 40 40 44',brow:'sad',eyes:'big'},
+  shame:{name:'창피해요',color:'#f2a7b8',mouth:'M26 42 Q32 45 38 42',eyes:'down',blush:1},
+  annoyed:{name:'짜증나요',color:'#e8b84a',mouth:'M23 44 L41 41',eyes:'half',brow:'angry'},
+  lonely:{name:'외로워요',color:'#8fa9c9',mouth:'M25 44 Q32 40 39 44',eyes:'down',brow:'sad'},
+  disappointed:{name:'실망했어요',color:'#9fb7a6',mouth:'M23 43 Q32 39 41 43',eyes:'half'},
+  thankful:{name:'고마워요',color:'#ffbe8c',mouth:'M22 39 Q32 48 42 39',eyes:'down',blush:1},
+  excited:{name:'설레요',color:'#ff9fc6',mouth:'M20 38 Q32 52 44 38',eyes:'big',blush:1},
+  surprised:{name:'놀랐어요',color:'#9fd8f0',mouth:'M28 44 a4 5 0 1 0 8 0 a4 5 0 1 0 -8 0',eyes:'big'},
+  scared:{name:'무서워요',color:'#b9a6e8',mouth:'M22 44 Q25 41 28 44 Q31 47 34 44 Q37 41 40 44',eyes:'big',brow:'worry'},
+  sorry:{name:'미안해요',color:'#d4c2ae',mouth:'M27 43 Q32 40 37 43',brow:'sad'}
+};
+const EMO_BASIC = ['joy','calm','worry','sad','angry'];
+const EMO_MORE = ['thankful','excited','surprised','scared','unfair','shame','annoyed','lonely','disappointed','sorry'];
+const EMO_KEYS = EMO_BASIC;
+function face(k){
+  const e=EMO[k]; let brow='', eyes='';
+  const S='stroke="#1f2a2c" stroke-width="3" fill="none" stroke-linecap="round"';
+  if(e.brow==='angry') brow=`<path d="M18 22 L28 26 M46 22 L36 26" ${S}/>`;
+  if(e.brow==='sad') brow=`<path d="M18 25 L27 22 M46 25 L37 22" ${S}/>`;
+  if(e.brow==='worry') brow=`<path d="M19 23 Q23 19 28 22 M45 23 Q41 19 36 22" ${S}/>`;
+  if(e.eyes==='down') eyes=`<path d="M19 32 Q23 35 27 32 M37 32 Q41 35 45 32" ${S}/>`;
+  else if(e.eyes==='half') eyes=`<path d="M19 30 H27 M37 30 H45" ${S}/><circle cx="23" cy="32" r="2.2" fill="#1f2a2c"/><circle cx="41" cy="32" r="2.2" fill="#1f2a2c"/>`;
+  else if(e.eyes==='big') eyes='<circle cx="23" cy="31" r="4.5" fill="#ffffff" stroke="#1f2a2c" stroke-width="2"/><circle cx="41" cy="31" r="4.5" fill="#ffffff" stroke="#1f2a2c" stroke-width="2"/><circle cx="23" cy="32" r="2.2" fill="#1f2a2c"/><circle cx="41" cy="32" r="2.2" fill="#1f2a2c"/>';
+  else eyes='<circle cx="23" cy="30" r="3.5" fill="#1f2a2c"/><circle cx="41" cy="30" r="3.5" fill="#1f2a2c"/>';
+  const blush=e.blush?'<ellipse cx="17" cy="40" rx="5" ry="3" fill="#e0607e" opacity=".6"/><ellipse cx="47" cy="40" rx="5" ry="3" fill="#e0607e" opacity=".6"/>':'';
+  return `<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="${e.color}" stroke="#1f2a2c" stroke-width="2.5"/>${blush}${brow}${eyes}<path d="${e.mouth}" stroke="#1f2a2c" stroke-width="3.5" fill="none" stroke-linecap="round"/></svg>`;
+}
+/* 그림: 상대방 표정이 보이는 두 사람 (p:표정), 혼자 앉은 친구, 휴대폰 */
+const MINI={
+  neutral:'<circle cx="77" cy="23" r="1.6" fill="#1f2a2c"/><circle cx="84" cy="23" r="1.6" fill="#1f2a2c"/><path d="M77 29 H84" stroke="#1f2a2c" stroke-width="1.8" stroke-linecap="round"/>',
+  happy:'<circle cx="77" cy="23" r="1.6" fill="#1f2a2c"/><circle cx="84" cy="23" r="1.6" fill="#1f2a2c"/><path d="M76 27 Q80.5 32 85 27" stroke="#1f2a2c" stroke-width="1.8" fill="none" stroke-linecap="round"/>',
+  surprised:'<circle cx="77" cy="22" r="1.8" fill="#1f2a2c"/><circle cx="84" cy="22" r="1.8" fill="#1f2a2c"/><circle cx="80.5" cy="29" r="2.4" fill="none" stroke="#1f2a2c" stroke-width="1.8"/>',
+  sad:'<path d="M75 20 L79 21.5 M86 20 L82 21.5" stroke="#1f2a2c" stroke-width="1.6" stroke-linecap="round"/><circle cx="77" cy="24" r="1.6" fill="#1f2a2c"/><circle cx="84" cy="24" r="1.6" fill="#1f2a2c"/><path d="M77 30 Q80.5 27 84 30" stroke="#1f2a2c" stroke-width="1.8" fill="none" stroke-linecap="round"/>',
+  angry:'<path d="M75 20 L79 22 M86 20 L82 22" stroke="#1f2a2c" stroke-width="1.8" stroke-linecap="round"/><circle cx="77" cy="24" r="1.6" fill="#1f2a2c"/><circle cx="84" cy="24" r="1.6" fill="#1f2a2c"/><path d="M77 30 Q80.5 28 84 30" stroke="#1f2a2c" stroke-width="1.8" fill="none" stroke-linecap="round"/>',
+  sly:'<circle cx="77" cy="23" r="1.6" fill="#1f2a2c"/><circle cx="84" cy="23" r="1.6" fill="#1f2a2c"/><path d="M76 28 Q81 31 86 26" stroke="#1f2a2c" stroke-width="1.8" fill="none" stroke-linecap="round"/>'
+};
+function pp(m){
+  const down=m==='down';
+  const head=down?'<circle cx="82" cy="30" r="10" fill="var(--fk-desc)" stroke="var(--ink)" stroke-width="2.5"/><path d="M77 33 Q79 35 81 33 M84 33 Q86 35 88 33" stroke="#1f2a2c" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M79 39 Q82 37 85 39" stroke="#1f2a2c" stroke-width="1.6" fill="none" stroke-linecap="round"/>'
+    :`<circle cx="80.5" cy="25" r="10" fill="var(--fk-desc)" stroke="var(--ink)" stroke-width="2.5"/>${MINI[m]||MINI.neutral}`;
+  return `<svg viewBox="0 0 120 70"><circle cx="40" cy="24" r="10" fill="var(--sun)" stroke="var(--ink)" stroke-width="2.5"/><circle cx="37" cy="23" r="1.6" fill="#1f2a2c"/><circle cx="43" cy="23" r="1.6" fill="#1f2a2c"/><path d="M37 28 H43" stroke="#1f2a2c" stroke-width="1.8" stroke-linecap="round"/><path d="M22 68 Q40 38 58 68" fill="var(--sun)" stroke="var(--ink)" stroke-width="2.5"/>${head}<path d="M${down?66:64} 68 Q80.5 ${down?44:40} ${down?99:97} 68" fill="var(--fk-desc)" stroke="var(--ink)" stroke-width="2.5"/></svg>`;
+}
+const PIC = {
+  clinic:'<svg viewBox="0 0 120 70"><rect x="24" y="14" width="72" height="52" rx="4" fill="var(--surface)" stroke="var(--ink)" stroke-width="2.5"/><rect x="50" y="22" width="20" height="20" rx="3" fill="#f28b82" stroke="var(--ink)" stroke-width="2"/><path d="M60 26 V38 M54 32 H66" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/><rect x="52" y="48" width="16" height="18" fill="var(--fk-noun)" stroke="var(--ink)" stroke-width="2"/></svg>',
+  book:'<svg viewBox="0 0 120 70"><rect x="20" y="8" width="80" height="58" rx="3" fill="var(--fk-noun)" stroke="var(--ink)" stroke-width="2.5"/><path d="M20 37 H100" stroke="var(--ink)" stroke-width="2.5"/><rect x="28" y="14" width="8" height="21" fill="var(--fk-desc)" stroke="var(--ink)" stroke-width="1.8"/><rect x="38" y="16" width="8" height="19" fill="var(--sun)" stroke="var(--ink)" stroke-width="1.8"/><rect x="48" y="14" width="10" height="21" fill="var(--fk-social)" stroke="var(--ink)" stroke-width="1.8"/><rect x="30" y="43" width="10" height="21" fill="var(--fk-verb)" stroke="var(--ink)" stroke-width="1.8"/><rect x="42" y="45" width="8" height="19" fill="var(--fk-desc)" stroke="var(--ink)" stroke-width="1.8"/><path d="M70 64 L80 43 L88 46 L78 66Z" fill="var(--sun)" stroke="var(--ink)" stroke-width="1.8"/></svg>',
+  cafe:'<svg viewBox="0 0 120 70"><path d="M38 26 H78 V50 a14 14 0 0 1 -14 14 H52 a14 14 0 0 1 -14 -14Z" fill="var(--surface)" stroke="var(--ink)" stroke-width="2.5"/><rect x="40" y="34" width="36" height="8" fill="var(--fk-noun)"/><path d="M78 32 h6 a8 8 0 0 1 0 16 h-6" fill="none" stroke="var(--ink)" stroke-width="2.5"/><path d="M50 18 q-4 -5 0 -10 M60 18 q-4 -5 0 -10 M70 18 q-4 -5 0 -10" stroke="var(--ink)" stroke-width="2" fill="none" stroke-linecap="round"/></svg>',
+  store:'<svg viewBox="0 0 120 70"><rect x="10" y="20" width="100" height="46" rx="4" fill="var(--surface)" stroke="var(--ink)" stroke-width="2.5"/><path d="M6 20 L18 6 H102 L114 20Z" fill="var(--sun)" stroke="var(--ink)" stroke-width="2.5"/><rect x="22" y="32" width="30" height="34" fill="var(--surface-2)" stroke="var(--ink)" stroke-width="2"/><rect x="64" y="32" width="34" height="18" fill="var(--surface-2)" stroke="var(--ink)" stroke-width="2"/></svg>',
+  think:'<svg viewBox="0 0 120 70"><circle cx="40" cy="30" r="12" fill="var(--sun)" stroke="var(--ink)" stroke-width="2.5"/><circle cx="36" cy="29" r="1.8" fill="#1f2a2c"/><circle cx="44" cy="29" r="1.8" fill="#1f2a2c"/><path d="M37 35 H43" stroke="#1f2a2c" stroke-width="2" stroke-linecap="round"/><path d="M20 70 Q40 42 60 70" fill="var(--sun)" stroke="var(--ink)" stroke-width="2.5"/><circle cx="62" cy="18" r="3" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/><ellipse cx="88" cy="16" rx="22" ry="12" fill="var(--surface)" stroke="var(--ink)" stroke-width="2.5"/><text x="88" y="21" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">?</text></svg>',
+  food:'<svg viewBox="0 0 120 70"><rect x="14" y="30" width="92" height="30" rx="6" fill="var(--surface)" stroke="var(--ink)" stroke-width="2.5"/><circle cx="36" cy="45" r="9" fill="var(--fk-noun)" stroke="var(--ink)" stroke-width="2"/><rect x="52" y="37" width="20" height="16" rx="3" fill="var(--fk-verb)" stroke="var(--ink)" stroke-width="2"/><rect x="78" y="37" width="20" height="16" rx="3" fill="var(--fk-people)" stroke="var(--ink)" stroke-width="2"/></svg>',
+  bus:'<svg viewBox="0 0 120 70"><rect x="16" y="10" width="88" height="44" rx="8" fill="var(--fk-verb)" stroke="var(--ink)" stroke-width="2.5"/><rect x="24" y="18" width="20" height="16" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/><rect x="50" y="18" width="20" height="16" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/><rect x="76" y="18" width="20" height="16" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/><circle cx="36" cy="58" r="7" fill="var(--ink)"/><circle cx="84" cy="58" r="7" fill="var(--ink)"/></svg>',
+  desk:'<svg viewBox="0 0 120 70"><rect x="12" y="28" width="96" height="8" fill="var(--fk-noun)" stroke="var(--ink)" stroke-width="2.5"/><path d="M20 36 V64 M100 36 V64" stroke="var(--ink)" stroke-width="3"/><rect x="30" y="14" width="26" height="14" rx="3" fill="var(--fk-desc)" stroke="var(--ink)" stroke-width="2"/><rect x="66" y="18" width="24" height="10" rx="2" fill="var(--fk-social)" stroke="var(--ink)" stroke-width="2"/></svg>',
+  home:'<svg viewBox="0 0 120 70"><path d="M24 34 L60 8 L96 34" fill="var(--fk-social)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><rect x="32" y="32" width="56" height="34" fill="var(--surface)" stroke="var(--ink)" stroke-width="2.5"/><rect x="54" y="44" width="14" height="22" fill="var(--fk-noun)" stroke="var(--ink)" stroke-width="2"/><rect x="38" y="40" width="10" height="10" fill="var(--fk-desc)" stroke="var(--ink)" stroke-width="2"/></svg>',
+  phone:'<svg viewBox="0 0 120 70"><rect x="42" y="4" width="36" height="62" rx="7" fill="var(--surface)" stroke="var(--ink)" stroke-width="2.5"/><rect x="47" y="13" width="20" height="9" rx="4" fill="var(--fk-desc)" stroke="var(--ink)" stroke-width="1.5"/><rect x="53" y="26" width="20" height="9" rx="4" fill="var(--sun)" stroke="var(--ink)" stroke-width="1.5"/><rect x="47" y="39" width="16" height="9" rx="4" fill="var(--fk-desc)" stroke="var(--ink)" stroke-width="1.5"/><circle cx="60" cy="58" r="3" fill="none" stroke="var(--ink)" stroke-width="1.5"/></svg>',
+  alone:'<svg viewBox="0 0 120 70"><rect x="10" y="40" width="40" height="6" fill="var(--fk-noun)" stroke="var(--ink)" stroke-width="2"/><circle cx="22" cy="30" r="7" fill="var(--sun)" stroke="var(--ink)" stroke-width="2"/><circle cx="38" cy="30" r="7" fill="var(--sun)" stroke="var(--ink)" stroke-width="2"/><rect x="72" y="40" width="40" height="6" fill="var(--fk-noun)" stroke="var(--ink)" stroke-width="2"/><circle cx="92" cy="30" r="8" fill="var(--fk-desc)" stroke="var(--ink)" stroke-width="2.2"/><path d="M88 32 Q90 34 91 32 M93 32 Q95 34 96 32" stroke="#1f2a2c" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M89 36.5 Q92 35 95 36.5" stroke="#1f2a2c" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>'
+};
+function pic(k){return k.startsWith('p:')?pp(k.slice(2)):(PIC[k]||PIC.think)}
+const SKILLS = {req:'도움 요청하기',thanks:'고마움 표현',refuse:'거절하기',sorry:'사과하기',feel:'내 마음 말하기',start:'대화 시작하기',solve:'갈등 해결',empathy:'관점 수용'};
+
+const SCEN = [
+ {id:'s1',lv:1,skill:'req',place:'편의점',title:'찾는 물건이 안 보여요',
+  panels:[['store','편의점에 우유를 사러 왔어요.'],['think','아무리 찾아도 우유가 안 보여요.'],['p:neutral','계산대에 점원이 있어요.']],
+  who:'나',feel:'worry',feelAlt:['annoyed'],feelHint:'찾는 게 안 보이면 마음이 조마조마해요.',
+  q:'점원에게 어떻게 말할까요?',
+  opts:[
+   {t:'저기요, 우유는 어디에 있어요?',ok:true,fb:'무엇을 찾는지 정확하게 물어봤어요. 점원이 바로 알려줄 수 있어요.'},
+   {t:'우유요.',ok:false,fb:'짧게 말하면 점원이 무슨 뜻인지 헷갈릴 수 있어요. "어디 있어요?"까지 말해볼까요?'},
+   {t:'(점원 근처에서 두리번거리며 기다린다)',ok:false,fb:'점원이 알아채면 다행이지만, 바쁘면 못 볼 수 있어요. 먼저 말을 걸어봐요.'}],
+  hint:'"저기요" 하고 부른 다음, 찾는 물건 이름을 말해요.',model:'저기요, 우유는 어디에 있어요?'},
+ {id:'s2',lv:1,skill:'req',place:'급식실',title:'반찬을 더 먹고 싶어요',
+  panels:[['food','오늘 반찬은 내가 좋아하는 불고기예요.'],['think','다 먹었는데 더 먹고 싶어요.'],['p:neutral','배식하시는 선생님이 계세요.']],
+  who:'나',feel:'joy',feelAlt:['excited','thankful'],feelHint:'좋아하는 반찬이 나오면 기분이 좋아요.',
+  q:'어떻게 말할까요?',
+  opts:[
+   {t:'(친구에게) 너 불고기 안 먹을 거면 나 줘.',ok:false,fb:'친구에게 물어보는 것도 방법이에요. 그런데 "나 줘"보다 "나 줄 수 있어?"가 더 부드러워요.'},
+   {t:'불고기 조금 더 주세요.',ok:true,fb:'원하는 것을 공손하게 부탁했어요.'},
+   {t:'(배식대 앞에 식판을 내밀고 서 있는다)',ok:false,fb:'선생님이 알아챌 수도 있지만, 말로 하면 더 확실해요.'}],
+  hint:'원하는 음식 이름 + "주세요"',model:'불고기 조금 더 주세요.'},
+ {id:'s3',lv:1,skill:'thanks',place:'운동장',title:'친구가 일으켜 줬어요',
+  panels:[['think','체육시간에 달리다가 넘어졌어요.'],['p:happy','민준이가 손을 내밀어 일으켜 줬어요.'],['think','민준이에게 무슨 말을 할까요?']],
+  who:'나',feel:'calm',feelAlt:['joy','shame','thankful'],feelHint:'친구가 도와줘서 마음이 놓였어요. 넘어져서 조금 창피할 수도 있어요.',
+  q:'민준이에게 어떻게 할까요?',
+  opts:[
+   {t:'고마워, 민준아.',ok:true,fb:'도움을 받았을 때 고맙다고 말하면 친구도 기분이 좋아요.'},
+   {t:'괜찮아, 혼자 일어날 수 있었어.',ok:false,fb:'창피해서 그렇게 말할 수 있어요. 그래도 도와준 친구는 서운할 수 있어요. 고마움부터 말해볼까요?'},
+   {t:'(엄지를 들어 보이며 웃는다)',ok:true,fb:'몸짓으로도 고마움을 전할 수 있어요. "고마워" 한마디를 더하면 더 확실해요.'}],
+  hint:'도와준 사람에게 하는 말이에요. "고마워"',model:'고마워, 민준아.'},
+ {id:'s4',lv:2,skill:'refuse',place:'교실',title:'지금은 쉬고 싶어요',
+  panels:[['desk','쉬는 시간, 머리가 아파서 엎드려 있어요.'],['p:happy','서연이가 "같이 보드게임 하자!" 해요.'],['think','지금은 쉬고 싶어요.']],
+  who:'나',feel:'sad',feelAlt:['worry','annoyed','calm'],feelHint:'몸이 아프면 기운이 없고 혼자 조용히 있고 싶어요.',
+  q:'서연이에게 어떻게 말할까요?',
+  opts:[
+   {t:'어... 그래, 하자. (싫지만)',ok:false,fb:'친구를 실망시키기 싫을 수 있어요. 하지만 내 몸이 힘들 때는 말해도 괜찮아요.'},
+   {t:'아 싫어, 귀찮아.',ok:false,fb:'싫다는 건 잘 말했어요. 그런데 "귀찮아"라고 하면 서연이가 상처받을 수 있어요. 이유를 말해볼까요?'},
+   {t:'미안, 머리가 아파서 쉬고 싶어. 다음에 하자.',ok:true,fb:'싫다는 마음과 이유, 다음 약속까지 말했어요. 최고의 거절이에요.'}],
+  hint:'"미안" + 이유 + "다음에 하자"',model:'미안, 지금은 쉬고 싶어. 다음에 하자.'},
+ {id:'s5',lv:2,skill:'sorry',place:'교실',title:'친구 필통을 떨어뜨렸어요',
+  panels:[['desk','지나가다가 지우의 필통을 툭 쳤어요.'],['desk','연필이 바닥에 다 쏟아졌어요.'],['p:surprised','지우가 깜짝 놀라 나를 봐요.']],
+  who:'지우',feel:'sad',feelAlt:['angry','annoyed','surprised'],feelHint:'지우 얼굴을 봐요. 내 물건이 쏟아지면 속상하거나 짜증이 날 수 있어요.',
+  q:'지우에게 어떻게 할까요?',
+  opts:[
+   {t:'미안해. 내가 같이 주울게.',ok:true,fb:'사과하고 도와주기까지 했어요. 지우 마음이 금방 풀릴 거예요.'},
+   {t:'아, 일부러 그런 거 아니야.',ok:false,fb:'일부러가 아닌 건 맞아요. 그래도 "미안해"를 먼저 말하면 지우 마음이 더 빨리 풀려요.'},
+   {t:'(말없이 연필을 주워 준다)',ok:false,fb:'도와준 건 아주 좋아요! 여기에 "미안해" 한마디를 더하면 완벽해요.'}],
+  hint:'"미안해" + 도와주는 행동',model:'미안해. 내가 같이 주울게.'},
+ {id:'s6',lv:2,skill:'refuse',place:'버스정류장',title:'모르는 사람이 계속 말을 걸어요',
+  panels:[['bus','버스를 타고 집에 가는 중이에요.'],['p:sly','모르는 어른이 옆에 앉아 계속 말을 걸어요.'],['think','어디 사는지, 전화번호를 물어봐요.']],
+  who:'나',feel:'worry',feelAlt:['angry','annoyed','scared'],feelHint:'모르는 사람이 개인 정보를 물으면 걱정되고 불편해요.',
+  q:'어떻게 해야 할까요?',
+  opts:[
+   {t:'음... 그건 좀... (애매하게 웃는다)',ok:false,fb:'애매하게 말하면 상대가 계속 물어볼 수 있어요. 분명하게 "싫어요"라고 해도 괜찮아요.'},
+   {t:'싫어요. 말하지 마세요. (자리를 옮기고 기사님께 알린다)',ok:true,fb:'분명하게 거절하고 도와줄 어른을 찾았어요. 아주 안전한 행동이에요.'},
+   {t:'(아무 동네 이름이나 대충 말해준다)',ok:false,fb:'대답을 하면 대화가 계속 이어질 수 있어요. 대답하지 않고 자리를 옮기는 게 더 안전해요.'}],
+  hint:'"싫어요" 라고 말하고, 도와줄 어른에게 가요.',model:'싫어요. 말하지 마세요.'},
+ {id:'s7',lv:3,skill:'solve',place:'교실',title:'내 의견을 안 들어줘요',
+  panels:[['desk','모둠에서 포스터 색깔을 정하고 있어요.'],['p:neutral','나는 파란색을 말했는데 아무도 안 들어요.'],['p:happy','모두 빨간색으로 하자고 해요.']],
+  who:'나',feel:'sad',feelAlt:['angry','unfair','disappointed','annoyed'],feelHint:'내 말을 안 들어주면 서운하고 속상해요.',
+  q:'어떻게 말하면 좋을까요?',
+  opts:[
+   {t:'몰라, 너희 마음대로 해.',ok:false,fb:'포기하면 친구들은 내 생각을 끝내 알 수 없어요.'},
+   {t:'내 의견도 들어줘. 빨간색이랑 파란색을 같이 쓰는 건 어때?',ok:true,fb:'내 마음을 말하고 모두가 좋을 방법까지 제안했어요.'},
+   {t:'선생님! 쟤네가 제 말 안 들어요!',ok:false,fb:'도움을 청하는 건 좋아요. 그 전에 친구들에게 먼저 내 생각을 말해보면 어떨까요?'}],
+  hint:'내 마음 말하기 + 함께하는 방법 제안하기',model:'내 의견도 들어줘. 같이 쓰는 건 어때?'},
+ {id:'s8',lv:3,skill:'empathy',place:'교실',title:'친구가 시무룩해요',
+  panels:[['p:down','아침에 하준이가 고개를 숙이고 있어요.'],['think','평소에는 먼저 인사하는 친구예요.'],['p:down','오늘은 아무 말도 안 해요.']],
+  who:'하준',feel:'sad',feelAlt:['worry','lonely','disappointed'],feelHint:'고개를 숙이고 말이 없으면 속상한 일이 있을 수 있어요.',
+  q:'하준이에게 어떻게 할까요?',
+  opts:[
+   {t:'하준아, 무슨 일 있어? 괜찮아?',ok:true,fb:'친구 마음을 짐작하고 걱정해 주었어요. 따뜻한 말이에요.'},
+   {t:'야, 왜 이렇게 기운 없어? 웃어!',ok:false,fb:'기운 내라는 마음은 좋아요. 그런데 억지로 웃으라고 하면 하준이가 더 힘들 수 있어요.'},
+   {t:'(하준이 옆에 조용히 앉아 있어 준다)',ok:true,fb:'말없이 곁에 있어 주는 것도 큰 위로가 돼요.'}],
+  hint:'친구 이름 + "괜찮아?"',model:'하준아, 무슨 일 있어? 괜찮아?'},
+ {id:'s9',lv:2,skill:'feel',place:'집',title:'동생이 내 물건을 만졌어요',
+  panels:[['home','학교에서 돌아와 내 방에 들어왔어요.'],['p:happy','동생이 내 게임기를 허락 없이 하고 있어요.'],['think','게임기는 내가 아끼는 물건이에요.']],
+  who:'나',feel:'annoyed',feelAlt:['angry','sad'],feelHint:'아끼는 물건을 허락 없이 쓰면 짜증이 나거나 화가 나요.',
+  q:'동생에게 어떻게 말할까요?',
+  opts:[
+   {t:'야! 그거 내 거잖아!',ok:false,fb:'화날 만해요. 그런데 소리치면 싸움이 커질 수 있어요. 차분하게 원하는 걸 말해볼까요?'},
+   {t:'내 물건은 먼저 물어봐 줘. 지금은 돌려줄래?',ok:true,fb:'화난 마음을 차분한 말로 바꿨어요. 원하는 것도 분명하게 말했어요.'},
+   {t:'엄마! 동생이 내 게임기 만져!',ok:false,fb:'어른께 알리는 것도 방법이에요. 먼저 동생에게 직접 말해보고, 그래도 안 되면 도움을 청해요.'}],
+  hint:'"먼저 물어봐 줘" + 원하는 것 말하기',model:'내 물건은 먼저 물어봐 줘.'},
+ {id:'s10',lv:2,skill:'feel',place:'편의점',title:'누가 내 앞에 끼어들었어요',
+  panels:[['store','편의점 계산대에 줄을 서 있어요.'],['p:neutral','어떤 형이 내 앞으로 쑥 끼어들었어요.'],['think','나는 먼저 와서 기다리고 있었어요.']],
+  who:'나',feel:'unfair',feelAlt:['angry','annoyed'],feelHint:'먼저 왔는데 차례를 빼앗기면 억울하고 화가 나요.',
+  q:'어떻게 말할까요?',
+  opts:[
+   {t:'제가 먼저 줄 서 있었어요.',ok:true,fb:'차분하게 사실을 말했어요. 내 차례를 지키는 좋은 방법이에요.'},
+   {t:'(형을 째려보며 크게 한숨을 쉰다)',ok:false,fb:'기분 나쁜 건 전해지지만, 형은 내가 뭘 원하는지 몰라요.'},
+   {t:'저기요, 줄 서신 거예요? 제가 먼저 왔어요.',ok:true,fb:'먼저 확인하고 말했어요. 형이 줄을 못 봤을 수도 있으니까 좋은 방법이에요.'}],
+  hint:'"제가 먼저 줄 서 있었어요."',model:'제가 먼저 줄 서 있었어요.'},
+ {id:'s11',lv:1,skill:'req',place:'버스정류장',title:'앉고 싶은데 가방이 있어요',
+  panels:[['bus','버스에 탔는데 다리가 아파요.'],['bus','빈자리에 옆 사람 가방이 놓여 있어요.'],['p:neutral','옆 사람은 휴대폰을 보고 있어요.']],
+  who:'나',feel:'worry',feelAlt:['calm','annoyed'],feelHint:'모르는 사람에게 말을 걸 때는 조금 떨리고 걱정될 수 있어요.',
+  q:'옆 사람에게 어떻게 말할까요?',
+  opts:[
+   {t:'(가방 옆에 서서 기다린다)',ok:false,fb:'옆 사람이 휴대폰을 보느라 모를 수 있어요. 말을 걸어봐요.'},
+   {t:'가방 좀 치워요.',ok:false,fb:'원하는 건 잘 말했어요. "죄송한데", "될까요?"를 붙이면 더 부드러워요.'},
+   {t:'죄송한데, 여기 앉아도 될까요?',ok:true,fb:'공손하게 부탁했어요. 대부분 가방을 치워줄 거예요.'}],
+  hint:'"죄송한데" + "앉아도 될까요?"',model:'죄송한데, 여기 앉아도 될까요?'},
+ {id:'s12',lv:3,skill:'empathy',place:'급식실',title:'친구가 혼자 밥을 먹어요',
+  panels:[['food','점심시간, 친구들과 밥을 먹고 있어요.'],['alone','새로 전학 온 유나가 혼자 앉아 있어요.'],['think','유나는 아직 아는 친구가 없어요.']],
+  who:'유나',feel:'lonely',feelAlt:['sad','worry'],feelHint:'아는 사람이 없으면 외롭고 걱정될 수 있어요.',
+  q:'유나에게 어떻게 할까요?',
+  opts:[
+   {t:'유나야, 우리랑 같이 먹을래?',ok:true,fb:'친구의 외로운 마음을 알아채고 먼저 다가갔어요.'},
+   {t:'(유나가 먼저 오면 같이 먹어야지 하고 기다린다)',ok:false,fb:'유나는 먼저 다가오기 어려울 수 있어요. 내가 먼저 말해보면 어떨까요?'},
+   {t:'(유나 옆자리로 가서) 여기 앉아도 돼?',ok:true,fb:'내가 먼저 옆으로 갔어요. 유나도 덜 외로울 거예요.'}],
+  hint:'친구 이름 + "같이 먹을래?"',model:'유나야, 우리랑 같이 먹을래?'},
+ {id:'s13',lv:2,skill:'feel',place:'온라인',title:'단톡방에 내 사진이 올라왔어요',
+  panels:[['phone','반 단톡방에 내가 자는 사진이 올라왔어요.'],['phone','친구들이 "ㅋㅋㅋ" 하며 놀려요.'],['think','너무 창피하고 기분이 나빠요.']],
+  who:'나',feel:'shame',feelAlt:['angry','sad','annoyed'],feelHint:'모두가 보는 곳에서 놀림받으면 창피하고 화가 나요.',
+  q:'어떻게 하면 좋을까요?',
+  opts:[
+   {t:'(단톡방에 욕을 쓴다)',ok:false,fb:'화날 만해요. 그런데 욕을 쓰면 나도 문제가 될 수 있어요.'},
+   {t:'이 사진 지워 줘. 나 기분 나빠.',ok:true,fb:'분명하게 말했어요. 그래도 계속되면 화면을 캡처해서 선생님께 보여드려요.'},
+   {t:'(아무 말 없이 단톡방을 나간다)',ok:false,fb:'피하고 싶은 마음 이해해요. 그런데 사진은 그대로 남아요. 지워 달라고 하거나 어른께 알려요.'}],
+  hint:'"지워 줘" + 내 기분 말하기. 계속되면 캡처해서 선생님께',model:'이 사진 지워 줘. 나 기분 나빠.'},
+ {id:'s14',lv:2,skill:'feel',place:'온라인',title:'게임 채팅에서 욕을 들었어요',
+  panels:[['phone','친구들과 온라인 게임을 하고 있어요.'],['phone','내가 실수하자 같은 팀이 채팅으로 욕을 해요.'],['think','나도 똑같이 욕하고 싶어져요.']],
+  who:'나',feel:'annoyed',feelAlt:['angry','unfair','shame'],feelHint:'실수했는데 욕까지 들으면 짜증나고 화가 나요.',
+  q:'어떻게 할까요?',
+  opts:[
+   {t:'(똑같이 욕을 한다)',ok:false,fb:'똑같이 하면 싸움만 커지고, 나도 신고당할 수 있어요.'},
+   {t:'욕은 하지 마. 다음엔 잘할게.',ok:true,fb:'내 생각을 차분하게 말했어요.'},
+   {t:'(게임을 끄고 잠깐 쉰다)',ok:true,fb:'화가 날 때 잠깐 멈추는 것도 좋은 방법이에요. 욕이 계속되면 신고 기능을 써요.'}],
+  hint:'"욕은 하지 마" 또는 잠깐 쉬기',model:'욕은 하지 마. 다음엔 잘할게.'},
+ {id:'s15',lv:2,skill:'refuse',place:'편의점',title:'친구가 돈을 빌려달래요',
+  panels:[['store','학교 끝나고 친구와 편의점에 왔어요.'],['p:happy','친구가 "오천 원만 빌려줘, 내일 줄게" 해요.'],['think','지난번에 빌려준 돈도 아직 못 받았어요.']],
+  who:'나',feel:'worry',feelAlt:['annoyed','disappointed'],feelHint:'거절하면 친구가 싫어할까 봐 걱정될 수 있어요.',
+  q:'친구에게 어떻게 말할까요?',
+  opts:[
+   {t:'(싫지만 그냥 빌려준다)',ok:false,fb:'친구를 잃을까 봐 걱정될 수 있어요. 그래도 내 돈을 지키는 것도 중요해요.'},
+   {t:'미안, 지난번 것도 아직 못 받아서 안 돼.',ok:true,fb:'솔직한 이유와 함께 분명하게 거절했어요.'},
+   {t:'나 돈 없어. (사실은 있다)',ok:false,fb:'거짓말은 나중에 들킬 수 있어요. 솔직한 이유를 짧게 말해도 괜찮아요.'}],
+  hint:'"미안" + 솔직한 이유 + "안 돼"',model:'미안, 지난번 것도 못 받아서 안 돼.'},
+ {id:'s16',lv:1,skill:'req',place:'편의점',title:'직업체험 첫날, 모르는 일이 생겼어요',
+  panels:[['store','편의점 직업체험 첫날이에요.'],['p:neutral','손님이 택배를 보내고 싶다고 해요.'],['think','택배 보내는 방법을 아직 몰라요.']],
+  who:'나',feel:'worry',feelAlt:['shame'],feelHint:'처음 하는 일은 누구나 떨리고 걱정돼요.',
+  q:'어떻게 할까요?',
+  opts:[
+   {t:'(모르지만 아는 척 해본다)',ok:false,fb:'실수하면 손님이 곤란해질 수 있어요. 모를 때는 물어봐도 괜찮아요.'},
+   {t:'잠시만 기다려 주세요. 점장님께 여쭤볼게요.',ok:true,fb:'손님을 기다리게 하고, 도와줄 사람을 찾았어요. 일터에서 꼭 필요한 말이에요.'},
+   {t:'몰라요.',ok:false,fb:'솔직한 건 좋아요. 그런데 손님은 어떻게 해야 할지 몰라 당황해요. 도와줄 사람을 찾아봐요.'}],
+  hint:'"잠시만 기다려 주세요" + 도와줄 사람 찾기',model:'잠시만 기다려 주세요. 여쭤볼게요.'},
+ {id:'s17',lv:3,skill:'start',place:'교실',title:'친해지고 싶은 친구가 있어요',
+  panels:[['desk','같은 반 지민이와 친해지고 싶어요.'],['p:happy','지민이가 내가 좋아하는 가수 노래를 듣고 있어요.'],['think','말을 걸고 싶은데 떨려요.']],
+  who:'나',feel:'worry',feelAlt:['joy','shame','excited'],feelHint:'친해지고 싶은 사람에게 말을 걸 때는 설레고 떨려요.',
+  q:'지민이에게 어떻게 말을 걸까요?',
+  opts:[
+   {t:'너 그 노래 좋아해? 나도 그 가수 좋아해!',ok:true,fb:'둘이 좋아하는 것으로 대화를 시작했어요. 자연스러운 첫마디예요.'},
+   {t:'(지민이 이어폰 한쪽을 빼서 같이 듣는다)',ok:false,fb:'친해지고 싶은 마음은 좋아요. 그런데 허락 없이 물건을 만지면 놀랄 수 있어요.'},
+   {t:'(지민이를 계속 쳐다본다)',ok:false,fb:'말없이 계속 쳐다보면 지민이가 불편할 수 있어요. 짧게 말을 걸어봐요.'}],
+  hint:'둘 다 좋아하는 것 + 질문하기',model:'너 그 노래 좋아해? 나도 좋아해!'},
+ {id:'s18',lv:2,skill:'refuse',place:'온라인',title:'모르는 사람이 사진을 보내래요',
+  panels:[['phone','SNS로 모르는 사람이 메시지를 보냈어요.'],['phone','"사진 더 보내주면 선물 줄게" 해요.'],['think','선물이 탐나지만 이상한 느낌이 들어요.']],
+  who:'나',feel:'worry',feelAlt:['shame','angry','scared'],feelHint:'이상한 느낌이 들면 그 느낌을 믿어요. 걱정되는 게 당연해요.',
+  q:'어떻게 해야 할까요?',
+  opts:[
+   {t:'(선물이 갖고 싶어서 사진을 보낸다)',ok:false,fb:'모르는 사람에게 사진을 보내면 위험해요. 선물을 준다는 말도 조심해야 해요.'},
+   {t:'(답장하지 않고 차단한 뒤, 선생님이나 부모님께 보여 드린다)',ok:true,fb:'아주 안전한 행동이에요. 내 잘못이 아니니까 어른께 꼭 알려요.'},
+   {t:'누구세요? 몇 살이에요?',ok:false,fb:'대화를 이어가면 상대가 계속 연락할 수 있어요. 대답하지 않고 차단해요.'}],
+  hint:'답장하지 않기 → 차단 → 어른께 보여 드리기',model:'선생님, 모르는 사람이 이상한 메시지를 보냈어요.'}
+ ,
+ {id:'s19',lv:1,skill:'req',place:'교실',title:'수업 중에 배가 아파요',
+  panels:[['desk','수업 시간에 갑자기 배가 아파요.'],['clinic','보건실에 가고 싶어요.'],['p:neutral','선생님이 앞에서 수업하고 계세요.']],
+  who:'나',feel:'worry',feelAlt:['sad','scared','annoyed'],feelHint:'몸이 아프면 걱정되고 힘이 없어요.',
+  q:'선생님께 어떻게 말할까요?',
+  opts:[
+   {t:'(배를 잡고 엎드려 꾹 참는다)',ok:false,fb:'참으면 더 아플 수 있어요. 아플 때 말하는 것도 용기예요.'},
+   {t:'선생님, 배가 아파요. 보건실에 가도 될까요?',ok:true,fb:'아픈 곳과 원하는 것을 함께 말했어요. 선생님이 바로 도와주실 수 있어요.'},
+   {t:'(말없이 교실 밖으로 나간다)',ok:false,fb:'선생님이 어디 갔는지 몰라 걱정하실 수 있어요. 먼저 말하고 가요.'}],
+  hint:'"선생님" + 아픈 곳 + "보건실에 가도 될까요?"',model:'선생님, 배가 아파요. 보건실에 가도 될까요?'},
+ {id:'s20',lv:1,skill:'thanks',place:'도서관',title:'사서 선생님이 책을 찾아 주셨어요',
+  panels:[['book','도서관에서 동물 책을 찾고 있어요.'],['p:happy','사서 선생님이 책을 찾아 주셨어요.'],['think','선생님께 무슨 말을 할까요?']],
+  who:'나',feel:'thankful',feelAlt:['joy','calm','excited'],feelHint:'누가 나를 도와주면 고마운 마음이 들어요.',
+  q:'사서 선생님께 어떻게 말할까요?',
+  opts:[
+   {t:'찾아 주셔서 감사합니다.',ok:true,fb:'무엇이 고마운지까지 말했어요. 선생님도 기분이 좋으실 거예요.'},
+   {t:'(책만 받아서 자리로 간다)',ok:false,fb:'선생님은 책을 잘 찾았는지 궁금하실 수 있어요. "감사합니다" 한마디를 더해 봐요.'},
+   {t:'(고개를 숙여 인사하며) 감사합니다!',ok:true,fb:'인사와 말로 고마움을 전했어요. 어른께는 "감사합니다"가 딱 좋아요.'}],
+  hint:'어른께는 "감사합니다"',model:'찾아 주셔서 감사합니다.'},
+ {id:'s21',lv:1,skill:'req',place:'식당',title:'컵에 물이 없어요',
+  panels:[['food','가족과 식당에 왔어요.'],['think','목이 마른데 컵에 물이 없어요.'],['p:neutral','직원이 근처를 지나가요.']],
+  who:'나',feel:'calm',feelAlt:['worry','annoyed'],feelHint:'목이 마르면 조금 불편하고 답답할 수 있어요.',
+  q:'직원에게 어떻게 말할까요?',
+  opts:[
+   {t:'물!',ok:false,fb:'무엇이 필요한지는 알 수 있지만 조금 퉁명스럽게 들려요. "주세요"를 붙여 볼까요?'},
+   {t:'(빈 컵으로 식탁을 탁탁 친다)',ok:false,fb:'직원이 깜짝 놀랄 수 있어요. 손을 들고 "저기요"라고 불러요.'},
+   {t:'(손을 들고) 저기요, 물 좀 주세요.',ok:true,fb:'손을 들어 부르고 공손하게 부탁했어요.'}],
+  hint:'손 들기 + "저기요" + 필요한 것 + "주세요"',model:'저기요, 물 좀 주세요.'},
+ {id:'s22',lv:1,skill:'req',place:'지하철',title:'내릴 역을 모르겠어요',
+  panels:[['bus','지하철을 타고 시청역에 가요.'],['think','안내 방송이 잘 안 들려서 어디서 내릴지 헷갈려요.'],['p:neutral','지하철 직원이 지나가요.']],
+  who:'나',feel:'worry',feelAlt:['scared','annoyed'],feelHint:'길을 모르면 조마조마하고 걱정돼요.',
+  q:'어떻게 하면 좋을까요?',
+  opts:[
+   {t:'죄송한데요, 시청역은 몇 정거장 남았어요?',ok:true,fb:'"죄송한데요"로 공손하게 시작하고 궁금한 것을 정확히 물었어요.'},
+   {t:'(내릴 때까지 아무 말 없이 기다린다)',ok:false,fb:'역을 지나칠 수 있어요. 직원에게 물어보거나 역 이름 화면을 확인해요.'},
+   {t:'시청역 몰라요?',ok:false,fb:'물어본 건 좋아요. "죄송한데요"로 시작하면 더 공손하게 들려요.'}],
+  hint:'"죄송한데요" + 가고 싶은 곳 + 질문',model:'죄송한데요, 시청역은 몇 정거장 남았어요?'},
+ {id:'s23',lv:1,skill:'thanks',place:'집',title:'엄마가 도시락을 싸 주셨어요',
+  panels:[['home','체험학습 가는 날 아침이에요.'],['food','엄마가 내가 좋아하는 김밥을 싸 주셨어요.'],['think','엄마께 무슨 말을 할까요?']],
+  who:'나',feel:'joy',feelAlt:['thankful','excited','calm'],feelHint:'좋아하는 음식을 받으면 기쁘고 고마워요.',
+  q:'엄마께 어떻게 말할까요?',
+  opts:[
+   {t:'김밥이네.',ok:false,fb:'맞아요, 김밥이에요. 여기에 "고마워요"를 더하면 엄마가 기뻐하실 거예요.'},
+   {t:'엄마, 맛있는 김밥 싸 주셔서 고마워요!',ok:true,fb:'무엇이 고마운지 말했어요. 엄마도 아침부터 힘이 나실 거예요.'},
+   {t:'(도시락을 가방에 넣고 나간다)',ok:false,fb:'엄마는 내가 좋아하는지 궁금하실 수 있어요. 한마디 해 볼까요?'}],
+  hint:'고마운 일 + "고마워요"',model:'엄마, 맛있는 김밥 싸 주셔서 고마워요!'},
+ {id:'s24',lv:1,skill:'req',place:'교실',title:'설명을 못 알아들었어요',
+  panels:[['desk','선생님이 만들기 순서를 설명하셨어요.'],['think','두 번째 순서를 못 알아들었어요.'],['p:neutral','친구들은 벌써 만들기를 시작했어요.']],
+  who:'나',feel:'worry',feelAlt:['shame','annoyed'],feelHint:'나만 모르는 것 같으면 걱정되고 조금 창피할 수 있어요.',
+  q:'어떻게 하면 좋을까요?',
+  opts:[
+   {t:'(옆 친구 것을 몰래 보고 따라 한다)',ok:false,fb:'따라 하면 틀린 것까지 따라 할 수 있어요. 모르는 건 물어봐도 괜찮아요.'},
+   {t:'(그냥 가만히 앉아 있는다)',ok:false,fb:'기다리면 시간만 지나가요. 선생님은 질문을 반가워하세요.'},
+   {t:'선생님, 두 번째 순서를 다시 말씀해 주세요.',ok:true,fb:'모르는 부분을 정확히 짚어서 물었어요. 똑똑한 질문이에요.'}],
+  hint:'모르는 부분 + "다시 말씀해 주세요"',model:'선생님, 두 번째 순서를 다시 말씀해 주세요.'},
+ {id:'s25',lv:1,skill:'req',place:'미용실',title:'원하는 머리 모양을 말해요',
+  panels:[['store','미용실에 왔어요.'],['p:happy','미용사가 "어떻게 잘라 드릴까요?" 물어요.'],['think','앞머리만 짧게 자르고 싶어요.']],
+  who:'나',feel:'worry',feelAlt:['calm','excited'],feelHint:'원하는 대로 될지 조금 떨릴 수 있어요.',
+  q:'미용사에게 어떻게 말할까요?',
+  opts:[
+   {t:'아무렇게나요.',ok:false,fb:'내가 원하는 모양과 다르게 될 수 있어요. 원하는 것을 말해 봐요.'},
+   {t:'앞머리만 짧게 잘라 주세요.',ok:true,fb:'원하는 것을 분명하게 말했어요.'},
+   {t:'(휴대폰 사진을 보여 주며) 이렇게 잘라 주세요.',ok:true,fb:'사진을 보여 주는 것도 아주 좋은 방법이에요.'}],
+  hint:'원하는 모양 + "잘라 주세요" (사진을 보여 줘도 돼요)',model:'앞머리만 짧게 잘라 주세요.'},
+ {id:'s26',lv:2,skill:'sorry',place:'집',title:'동생 그림에 물을 쏟았어요',
+  panels:[['home','동생이 그림을 그리고 있어요.'],['p:sad','내가 물컵을 쳐서 그림이 젖었어요.'],['think','동생이 울 것 같아요.']],
+  who:'동생',feel:'sad',feelAlt:['angry','surprised','disappointed'],feelHint:'동생 얼굴을 봐요. 열심히 그린 그림이 젖으면 속상해요.',
+  q:'동생에게 어떻게 할까요?',
+  opts:[
+   {t:'네가 거기 둔 거잖아.',ok:false,fb:'내 실수를 동생 탓으로 돌리면 동생이 더 속상해요.'},
+   {t:'(못 본 척 방으로 들어간다)',ok:false,fb:'동생은 혼자 남아 더 속상할 거예요. 먼저 사과해 봐요.'},
+   {t:'미안해. 내가 휴지로 같이 닦아 줄게.',ok:true,fb:'사과하고 도와주기까지 했어요. 동생 마음이 빨리 풀릴 거예요.'}],
+  hint:'"미안해" + 도와주는 행동',model:'미안해. 내가 휴지로 같이 닦아 줄게.'},
+ {id:'s27',lv:2,skill:'refuse',place:'교실',title:'수업을 빼먹자고 해요',
+  panels:[['desk','점심시간이 끝나 가요.'],['p:sly','민혁이가 "다음 시간 빼먹고 PC방 가자" 해요.'],['think','수업에 빠지면 안 돼요.']],
+  who:'나',feel:'worry',feelAlt:['annoyed','scared'],feelHint:'친구 부탁을 거절하기는 조마조마하지만, 해서는 안 되는 일은 거절해요.',
+  q:'민혁이에게 어떻게 말할까요?',
+  opts:[
+   {t:'(싫지만) 그래, 가자.',ok:false,fb:'친구와 멀어질까 봐 걱정될 수 있어요. 하지만 수업을 빠지면 나도 혼날 수 있어요.'},
+   {t:'미안, 나는 수업 들어갈래. 방과 후에 같이 놀자.',ok:true,fb:'분명하게 거절하고 다른 방법도 말했어요. 멋진 거절이에요.'},
+   {t:'너 그러다 혼난다!',ok:false,fb:'걱정하는 마음은 좋아요. 그런데 내가 어떻게 할지도 말해 주면 더 분명해요.'}],
+  hint:'"미안" + 내 선택 + 다른 방법',model:'미안, 나는 수업 들어갈래. 방과 후에 같이 놀자.'},
+ {id:'s28',lv:2,skill:'feel',place:'운동장',title:'내 차례를 자꾸 건너뛰어요',
+  panels:[['think','친구들과 줄넘기를 하고 있어요.'],['p:neutral','지호가 내 차례인데 다른 친구를 불러요.'],['think','벌써 두 번째예요.']],
+  who:'나',feel:'unfair',feelAlt:['angry','sad','annoyed'],feelHint:'내 차례를 빼앗기면 억울하고 서운해요.',
+  q:'지호에게 어떻게 말할까요?',
+  opts:[
+   {t:'(줄넘기를 빼앗아 던진다)',ok:false,fb:'억울한 마음은 이해돼요. 하지만 던지면 친구가 다칠 수 있고 다툼이 커져요.'},
+   {t:'(아무 말 없이 구경만 한다)',ok:false,fb:'지호는 내가 하고 싶은지 모를 수 있어요. 내 마음을 말해 봐요.'},
+   {t:'지호야, 이번엔 내 차례야. 나도 하고 싶어.',ok:true,fb:'차분하게 사실과 내 마음을 말했어요.'}],
+  hint:'친구 이름 + "내 차례야" + 내 마음',model:'지호야, 이번엔 내 차례야. 나도 하고 싶어.'},
+ {id:'s29',lv:2,skill:'refuse',place:'온라인',title:'엄마 카드 번호를 알려 달래요',
+  panels:[['phone','같이 게임하는 친구가 메시지를 보냈어요.'],['phone','"아이템 사게 엄마 카드 번호 좀 알려 줘."'],['think','엄마 카드는 내 것이 아니에요.']],
+  who:'나',feel:'worry',feelAlt:['annoyed','scared'],feelHint:'돈이나 카드 이야기가 나오면 걱정되는 게 당연해요.',
+  q:'어떻게 해야 할까요?',
+  opts:[
+   {t:'알겠어, 잠깐만 기다려.',ok:false,fb:'카드 번호를 알려 주면 엄마 돈이 몰래 빠져나갈 수 있어요. 절대 알려 주면 안 돼요.'},
+   {t:'미안, 카드 번호는 알려 줄 수 없어.',ok:true,fb:'분명하게 거절했어요. 이런 메시지는 부모님께도 보여 드려요.'},
+   {t:'(몰래 엄마 지갑에서 카드를 찾아본다)',ok:false,fb:'엄마 카드는 허락 없이 쓰면 안 돼요. 거절하고 어른께 알려요.'}],
+  hint:'"미안, 그건 안 돼" + 부모님께 알리기',model:'미안, 카드 번호는 알려 줄 수 없어.'},
+ {id:'s30',lv:2,skill:'feel',place:'카페 실습',title:'혼자 하기엔 일이 너무 많아요',
+  panels:[['cafe','카페에서 직업 실습을 하고 있어요.'],['p:neutral','선배가 컵 정리, 바닥 청소, 쓰레기까지 하라고 해요.'],['think','시간 안에 혼자 다 하기 어려워요.']],
+  who:'나',feel:'worry',feelAlt:['annoyed','unfair','sad'],feelHint:'일이 너무 많으면 걱정되고 답답할 수 있어요.',
+  q:'선배에게 어떻게 말할까요?',
+  opts:[
+   {t:'이걸 왜 저 혼자 해요?',ok:false,fb:'억울한 마음은 이해돼요. 그런데 따지듯 말하면 선배가 기분 나쁠 수 있어요.'},
+   {t:'죄송한데, 혼자 다 하기 어려워요. 무엇부터 할까요?',ok:true,fb:'어려운 점을 말하고 순서를 물었어요. 일터에서 아주 중요한 말이에요.'},
+   {t:'(아무 말 없이 하다가 시간 안에 못 끝낸다)',ok:false,fb:'열심히 한 건 멋져요. 하지만 미리 말하면 선배가 도와주거나 순서를 정해 줄 수 있어요.'}],
+  hint:'"죄송한데" + 어려운 점 + 질문',model:'죄송한데, 혼자 다 하기 어려워요. 무엇부터 할까요?'},
+ {id:'s31',lv:2,skill:'sorry',place:'버스정류장',title:'약속 시간에 늦었어요',
+  panels:[['bus','버스가 늦게 와서 약속에 20분 늦었어요.'],['p:angry','수아가 기다리다가 화가 났어요.'],['think','수아에게 뭐라고 할까요?']],
+  who:'수아',feel:'angry',feelAlt:['annoyed','sad','disappointed'],feelHint:'수아 얼굴을 봐요. 오래 기다리면 화가 나고 서운해요.',
+  q:'수아에게 어떻게 말할까요?',
+  opts:[
+   {t:'늦어서 미안해. 다음엔 늦을 것 같으면 미리 연락할게.',ok:true,fb:'사과하고 다음 약속까지 했어요. 수아 마음이 풀릴 거예요.'},
+   {t:'버스가 늦게 온 거야. 내 잘못 아니야.',ok:false,fb:'이유는 맞아요. 그래도 기다린 수아 마음을 먼저 생각해서 사과부터 해요.'},
+   {t:'(늦은 이유를 말하지 않고 그냥 웃는다)',ok:false,fb:'수아는 내가 미안한지 모를 수 있어요. 말로 사과해 봐요.'}],
+  hint:'"미안해" + 다음에는 어떻게 할지',model:'늦어서 미안해. 다음엔 미리 연락할게.'},
+ {id:'s32',lv:3,skill:'solve',place:'교실',title:'모둠 역할이 겹쳤어요',
+  panels:[['desk','모둠 발표를 준비해요.'],['p:angry','나도 태오도 그림을 맡고 싶어요.'],['think','둘 다 양보하기 싫어요.']],
+  who:'나',feel:'annoyed',feelAlt:['unfair','disappointed','worry'],feelHint:'하고 싶은 걸 못 하게 될까 봐 답답하고 속상할 수 있어요.',
+  q:'태오에게 어떻게 말할까요?',
+  opts:[
+   {t:'내가 먼저 말했으니까 내가 할 거야.',ok:false,fb:'내 마음은 말했지만 태오는 서운할 수 있어요. 둘 다 좋은 방법을 찾아봐요.'},
+   {t:'그럼 그림을 반씩 나눠 그릴까?',ok:true,fb:'둘 다 하고 싶은 걸 할 수 있는 방법을 찾았어요.'},
+   {t:'가위바위보로 정하고, 진 사람은 글씨를 쓰자.',ok:true,fb:'공평한 방법으로 정하자고 했어요. 좋은 해결이에요.'}],
+  hint:'둘 다 좋은 방법 찾기: 나누기, 번갈아 하기, 공평하게 정하기',model:'그럼 그림을 반씩 나눠 그릴까?'},
+ {id:'s33',lv:3,skill:'empathy',place:'체육관',title:'친구 때문에 졌다고 해요',
+  panels:[['think','반 대항 피구 경기가 끝났어요.'],['p:down','준서가 마지막에 공에 맞아서 우리 반이 졌어요.'],['think','몇몇 친구가 "준서 때문에 졌어" 해요.']],
+  who:'준서',feel:'sad',feelAlt:['shame','disappointed','lonely'],feelHint:'준서는 고개를 숙이고 있어요. 자기 때문이라는 말을 들으면 속상하고 창피해요.',
+  q:'준서에게 어떻게 할까요?',
+  opts:[
+   {t:'준서야, 괜찮아. 끝까지 열심히 했잖아.',ok:true,fb:'준서 마음을 알아채고 따뜻하게 말했어요.'},
+   {t:'맞아, 너 때문에 졌어.',ok:false,fb:'준서는 이미 많이 속상해요. 이 말을 들으면 더 힘들어져요.'},
+   {t:'(준서 옆에 가서 어깨를 토닥여 준다)',ok:true,fb:'몸짓으로도 위로할 수 있어요. "괜찮아" 한마디를 더하면 더 좋아요.'}],
+  hint:'친구 이름 + "괜찮아" + 잘한 점',model:'준서야, 괜찮아. 끝까지 열심히 했잖아.'},
+ {id:'s34',lv:3,skill:'start',place:'동아리실',title:'처음 간 동아리에서 아는 친구가 없어요',
+  panels:[['alone','처음으로 보드게임 동아리에 왔어요.'],['p:happy','옆자리 친구가 내가 좋아하는 게임을 하고 있어요.'],['think','같이 하고 싶어요.']],
+  who:'나',feel:'worry',feelAlt:['excited','shame','lonely'],feelHint:'처음 만나는 사람에게 말을 걸 때는 떨리고 설레요.',
+  q:'옆자리 친구에게 어떻게 말할까요?',
+  opts:[
+   {t:'(옆에서 계속 쳐다보기만 한다)',ok:false,fb:'친구는 내가 같이 하고 싶은지 모를 수 있어요. 한마디 걸어 봐요.'},
+   {t:'안녕, 나도 그 게임 좋아해. 같이 해도 돼?',ok:true,fb:'인사하고 공통점을 말한 다음 같이 하자고 했어요. 대화 시작의 정석이에요.'},
+   {t:'그거 내가 더 잘해.',ok:false,fb:'자신감은 좋아요. 그런데 처음 만난 친구는 잘난 척으로 들을 수 있어요.'}],
+  hint:'인사 + 공통점 + "같이 해도 돼?"',model:'안녕, 나도 그 게임 좋아해. 같이 해도 돼?'},
+ {id:'s35',lv:3,skill:'solve',place:'집',title:'형과 보고 싶은 방송이 달라요',
+  panels:[['home','저녁에 형과 거실에 있어요.'],['p:angry','나는 만화, 형은 축구를 보고 싶어 해요.'],['think','텔레비전은 하나뿐이에요.']],
+  who:'나',feel:'annoyed',feelAlt:['angry','unfair'],feelHint:'원하는 걸 못 보게 되면 짜증 나고 억울할 수 있어요.',
+  q:'형에게 어떻게 말할까요?',
+  opts:[
+   {t:'(리모컨을 들고 방으로 도망간다)',ok:false,fb:'형이 더 화가 날 거예요. 둘 다 볼 수 있는 방법을 찾아봐요.'},
+   {t:'엄마! 형이 또 그래!',ok:false,fb:'어른께 도움을 청할 수도 있어요. 그 전에 둘이서 방법을 먼저 찾아볼까요?'},
+   {t:'형, 축구 전반전 보고 쉬는 시간에 만화 볼까?',ok:true,fb:'순서를 나누는 방법을 제안했어요. 둘 다 원하는 걸 볼 수 있어요.'}],
+  hint:'번갈아 하기, 시간 나누기를 제안해요',model:'형, 축구 전반전 보고 쉬는 시간에 만화 볼까?'},
+ {id:'s36',lv:3,skill:'empathy',place:'온라인',title:'단톡방에서 한 친구만 대답을 못 받아요',
+  panels:[['phone','반 단톡방에서 주말 계획을 이야기해요.'],['phone','서윤이가 말을 했는데 아무도 대답하지 않아요.'],['alone','서윤이가 "다들 나 싫어하나?"라고 썼어요.']],
+  who:'서윤',feel:'lonely',feelAlt:['sad','disappointed','worry'],feelHint:'아무도 대답하지 않으면 혼자인 것 같아 외롭고 속상해요.',
+  q:'서윤이에게 어떻게 할까요?',
+  opts:[
+   {t:'서윤아, 아까 말한 거 좋다! 같이 하자.',ok:true,fb:'서윤이 말에 대답해 주었어요. 서윤이가 덜 외로울 거예요.'},
+   {t:'(나도 그냥 다른 이야기를 한다)',ok:false,fb:'서윤이는 더 외로울 수 있어요. 한마디만 대답해 줘도 큰 힘이 돼요.'},
+   {t:'(서윤이에게 따로 "괜찮아?" 메시지를 보낸다)',ok:true,fb:'따로 마음을 물어봤어요. 다정한 방법이에요.'}],
+  hint:'친구 말에 대답하기, "괜찮아?" 묻기',model:'서윤아, 아까 말한 거 좋다! 같이 하자.'}
+ ,
+ {id:'s37',lv:1,skill:'req',place:'편의점',title:'거스름돈이 모자라요',
+  panels:[['store','편의점에서 과자를 샀어요.'],['think','거스름돈을 세어 보니 500원이 모자라요.'],['p:neutral','점원이 다음 손님을 계산하려고 해요.']],
+  who:'나',feel:'worry',feelAlt:['annoyed','surprised'],feelHint:'돈이 모자라면 당황하고 걱정돼요.',
+  q:'점원에게 어떻게 말할까요?',
+  opts:[
+   {t:'(그냥 가게를 나간다)',ok:false,fb:'내 돈을 돌려받지 못해요. 말해도 괜찮아요.'},
+   {t:'저기요, 거스름돈이 500원 모자라요.',ok:true,fb:'무엇이 문제인지 정확하고 공손하게 말했어요.'},
+   {t:'돈 덜 줬잖아요!',ok:false,fb:'모자란 건 맞아요. 그런데 화난 목소리보다 차분하게 말하면 더 빨리 해결돼요.'}],
+  hint:'"저기요" + 무엇이 모자란지',model:'저기요, 거스름돈이 500원 모자라요.'},
+ {id:'s38',lv:1,skill:'thanks',place:'버스',title:'기사님께 인사해요',
+  panels:[['bus','버스를 타고 학교 앞에 도착했어요.'],['p:happy','기사님이 문을 열어 주셨어요.'],['think','내리면서 무슨 말을 할까요?']],
+  who:'나',feel:'calm',feelAlt:['joy','thankful'],feelHint:'목적지에 잘 도착하면 마음이 편안해요.',
+  q:'기사님께 어떻게 할까요?',
+  opts:[
+   {t:'(말없이 내린다)',ok:false,fb:'안전하게 데려다주신 기사님께 인사하면 서로 기분이 좋아요.'},
+   {t:'(뛰어서 내린다)',ok:false,fb:'뛰면 넘어질 수 있어요. 천천히 내리며 인사해 봐요.'},
+   {t:'감사합니다! (고개를 숙여 인사한다)',ok:true,fb:'짧은 인사로 고마움을 전했어요.'}],
+  hint:'"감사합니다" + 고개 숙여 인사',model:'감사합니다!'},
+ {id:'s39',lv:1,skill:'req',place:'교실',title:'연필을 빌리고 싶어요',
+  panels:[['desk','시험지를 받았는데 연필이 없어요.'],['p:neutral','옆자리 친구 필통에 연필이 많아요.'],['think','연필을 빌리고 싶어요.']],
+  who:'나',feel:'worry',feelAlt:['shame','annoyed'],feelHint:'필요한 물건이 없으면 당황하고 걱정돼요.',
+  q:'친구에게 어떻게 말할까요?',
+  opts:[
+   {t:'연필 하나 빌려줄 수 있어?',ok:true,fb:'필요한 것을 묻는 말로 부드럽게 부탁했어요.'},
+   {t:'(친구 필통에서 말없이 꺼낸다)',ok:false,fb:'친구는 물건이 없어져서 놀랄 수 있어요. 먼저 물어봐요.'},
+   {t:'연필!',ok:false,fb:'무엇이 필요한지는 알지만 명령처럼 들려요. "빌려줄 수 있어?"를 붙여 봐요.'}],
+  hint:'필요한 물건 + "빌려줄 수 있어?"',model:'연필 하나 빌려줄 수 있어?'},
+ {id:'s40',lv:1,skill:'req',place:'카페',title:'음료를 주문해요',
+  panels:[['cafe','카페에 왔어요.'],['p:happy','직원이 "주문하시겠어요?" 물어요.'],['think','딸기 주스를 마시고 싶어요.']],
+  who:'나',feel:'worry',feelAlt:['excited','calm'],feelHint:'처음 주문할 때는 조금 떨릴 수 있어요.',
+  q:'직원에게 어떻게 말할까요?',
+  opts:[
+   {t:'딸기 주스 하나 주세요.',ok:true,fb:'원하는 것과 개수를 정확하게 말했어요.'},
+   {t:'아무거나요.',ok:false,fb:'내가 원하지 않는 음료가 나올 수 있어요.'},
+   {t:'(메뉴판을 가리키며) 이거 하나 주세요.',ok:true,fb:'가리키며 말하는 것도 좋은 방법이에요.'}],
+  hint:'원하는 것 + 개수 + "주세요"',model:'딸기 주스 하나 주세요.'},
+ {id:'s41',lv:1,skill:'thanks',place:'교실',title:'친구가 지우개를 빌려줬어요',
+  panels:[['desk','지우개를 집에 두고 왔어요.'],['p:happy','하린이가 지우개를 빌려줬어요.'],['think','다 쓰고 돌려줄 때 뭐라고 할까요?']],
+  who:'나',feel:'thankful',feelAlt:['joy','calm'],feelHint:'친구가 도와주면 고맙고 마음이 놓여요.',
+  q:'하린이에게 어떻게 말할까요?',
+  opts:[
+   {t:'(책상 위에 툭 놓고 간다)',ok:false,fb:'하린이는 내가 고마워하는지 모를 수 있어요.'},
+   {t:'여기.',ok:false,fb:'돌려준 건 좋아요. "고마워"를 더하면 하린이도 기분이 좋아요.'},
+   {t:'빌려줘서 고마워, 하린아!',ok:true,fb:'친구 이름과 고마운 일을 함께 말했어요.'}],
+  hint:'친구 이름 + "빌려줘서 고마워"',model:'빌려줘서 고마워, 하린아!'},
+ {id:'s42',lv:1,skill:'req',place:'병원',title:'어디가 아픈지 말해요',
+  panels:[['clinic','감기에 걸려 병원에 왔어요.'],['p:neutral','의사 선생님이 "어디가 아파요?" 물어요.'],['think','목이 아프고 기침이 나요.']],
+  who:'나',feel:'worry',feelAlt:['sad','scared'],feelHint:'아프고 병원에 오면 걱정되고 무서울 수 있어요.',
+  q:'의사 선생님께 어떻게 말할까요?',
+  opts:[
+   {t:'그냥 아파요.',ok:false,fb:'어디가 아픈지 말해야 의사 선생님이 알맞게 치료해 주실 수 있어요.'},
+   {t:'목이 아프고 기침이 나요.',ok:true,fb:'아픈 곳과 증상을 정확하게 말했어요.'},
+   {t:'(엄마를 쳐다보기만 한다)',ok:false,fb:'엄마가 도와주실 수 있지만, 내 몸은 내가 제일 잘 알아요. 직접 말해 봐요.'}],
+  hint:'아픈 곳 + 어떻게 아픈지',model:'목이 아프고 기침이 나요.'},
+ {id:'s43',lv:1,skill:'req',place:'동네',title:'공이 옆집으로 넘어갔어요',
+  panels:[['think','집 앞에서 공놀이를 해요.'],['home','공이 옆집 마당으로 넘어갔어요.'],['p:neutral','마당에 아저씨가 계세요.']],
+  who:'나',feel:'worry',feelAlt:['shame','scared'],feelHint:'남의 집에 공이 들어가면 걱정되고 조금 창피해요.',
+  q:'아저씨께 어떻게 말할까요?',
+  opts:[
+   {t:'(몰래 담을 넘어 들어간다)',ok:false,fb:'허락 없이 들어가면 위험하고 아저씨가 놀라세요.'},
+   {t:'죄송한데요, 공 좀 주실 수 있어요?',ok:true,fb:'먼저 사과하고 공손하게 부탁했어요.'},
+   {t:'아저씨! 공!',ok:false,fb:'무엇이 필요한지는 알지만 어른께는 공손하게 부탁해요.'}],
+  hint:'"죄송한데요" + "주실 수 있어요?"',model:'죄송한데요, 공 좀 주실 수 있어요?'},
+ {id:'s44',lv:1,skill:'thanks',place:'편의점',title:'친구가 간식을 나눠 줬어요',
+  panels:[['store','친구와 편의점에 왔어요.'],['p:happy','도윤이가 산 과자를 반 나눠 줬어요.'],['think','도윤이에게 무슨 말을 할까요?']],
+  who:'나',feel:'joy',feelAlt:['thankful','excited'],feelHint:'친구가 나눠 주면 기쁘고 고마워요.',
+  q:'도윤이에게 어떻게 말할까요?',
+  opts:[
+   {t:'나눠 줘서 고마워. 다음엔 내가 살게!',ok:true,fb:'고마움을 말하고 다음 약속까지 했어요.'},
+   {t:'(받아서 바로 먹는다)',ok:false,fb:'맛있게 먹는 것도 좋지만, 먼저 "고마워"라고 말해요.'},
+   {t:'이것밖에 없어?',ok:false,fb:'도윤이는 나눠 준 마음이 서운할 수 있어요.'}],
+  hint:'"나눠 줘서 고마워"',model:'나눠 줘서 고마워. 다음엔 내가 살게!'},
+ {id:'s45',lv:1,skill:'req',place:'교무실',title:'담임 선생님을 찾아요',
+  panels:[['desk','교무실에 담임 선생님을 찾으러 왔어요.'],['think','담임 선생님 자리가 비어 있어요.'],['p:neutral','문 앞에 다른 선생님이 계세요.']],
+  who:'나',feel:'worry',feelAlt:['shame','calm'],feelHint:'교무실에 가면 조금 긴장될 수 있어요.',
+  q:'다른 선생님께 어떻게 말할까요?',
+  opts:[
+   {t:'(문 앞에서 서성이다 돌아간다)',ok:false,fb:'물어보면 금방 찾을 수 있어요.'},
+   {t:'선생님 어디 있어요?',ok:false,fb:'물어본 건 좋아요. 인사하고 "계세요?"로 말하면 더 공손해요.'},
+   {t:'안녕하세요. 저희 담임 선생님 어디 계신지 아세요?',ok:true,fb:'인사하고 공손하게 물었어요.'}],
+  hint:'인사 + "어디 계신지 아세요?"',model:'안녕하세요. 저희 담임 선생님 어디 계신지 아세요?'},
+ {id:'s46',lv:1,skill:'req',place:'집',title:'숙제를 모르겠어요',
+  panels:[['home','수학 숙제를 하고 있어요.'],['think','세 번째 문제를 모르겠어요.'],['p:happy','형이 옆에서 쉬고 있어요.']],
+  who:'나',feel:'worry',feelAlt:['annoyed','sad'],feelHint:'모르는 문제가 있으면 답답하고 걱정돼요.',
+  q:'형에게 어떻게 말할까요?',
+  opts:[
+   {t:'형, 이 문제 좀 가르쳐 줄 수 있어?',ok:true,fb:'도움이 필요한 부분을 정확히 부탁했어요.'},
+   {t:'(숙제를 덮고 그만둔다)',ok:false,fb:'포기하기엔 아까워요. 모를 때는 도움을 청해도 돼요.'},
+   {t:'형이 대신 해 줘.',ok:false,fb:'형이 다 해 주면 내가 배우지 못해요. "가르쳐 줘"라고 부탁해요.'}],
+  hint:'"이 문제" + "가르쳐 줄 수 있어?"',model:'형, 이 문제 좀 가르쳐 줄 수 있어?'},
+ {id:'s47',lv:2,skill:'refuse',place:'교실',title:'숙제를 베끼게 해 달래요',
+  panels:[['desk','아침에 숙제를 내야 해요.'],['p:sly','친구가 "네 숙제 좀 보여 줘, 베끼게" 해요.'],['think','베끼게 해 주는 건 옳지 않아요.']],
+  who:'나',feel:'worry',feelAlt:['annoyed','unfair'],feelHint:'친구 부탁을 거절하기는 조마조마해요.',
+  q:'친구에게 어떻게 말할까요?',
+  opts:[
+   {t:'(싫지만 공책을 건넨다)',ok:false,fb:'친구와 멀어질까 봐 걱정될 수 있어요. 하지만 베끼면 둘 다 곤란해질 수 있어요.'},
+   {t:'미안, 베끼는 건 안 돼. 모르는 건 같이 풀어 볼까?',ok:true,fb:'분명히 거절하고 도와줄 방법도 말했어요.'},
+   {t:'절대 안 돼! 너 혼자 해!',ok:false,fb:'거절은 했지만 친구가 상처받을 수 있어요. "미안"으로 시작해 봐요.'}],
+  hint:'"미안" + 안 되는 이유 + 다른 방법',model:'미안, 베끼는 건 안 돼. 모르는 건 같이 풀어 볼까?'},
+ {id:'s48',lv:2,skill:'sorry',place:'급식실',title:'친구 옷에 국을 흘렸어요',
+  panels:[['food','식판을 들고 가다가 부딪혔어요.'],['p:surprised','지민이 옷에 국이 묻었어요.'],['think','지민이가 깜짝 놀라 나를 봐요.']],
+  who:'지민',feel:'surprised',feelAlt:['angry','sad','annoyed'],feelHint:'지민이 얼굴을 봐요. 갑자기 옷이 젖으면 놀라고 속상해요.',
+  q:'지민이에게 어떻게 할까요?',
+  opts:[
+   {t:'미안해! 괜찮아? 휴지 가져다줄게.',ok:true,fb:'사과하고 걱정해 주고 도와주기까지 했어요.'},
+   {t:'네가 갑자기 움직였잖아.',ok:false,fb:'남 탓을 하면 지민이가 더 속상해요. 먼저 사과해요.'},
+   {t:'(얼른 자리로 가서 모른 척한다)',ok:false,fb:'지민이는 혼자 남아 더 속상할 거예요.'}],
+  hint:'"미안해" + "괜찮아?" + 도와주기',model:'미안해! 괜찮아? 휴지 가져다줄게.'},
+ {id:'s49',lv:2,skill:'feel',place:'교실',title:'싫어하는 별명으로 불러요',
+  panels:[['desk','쉬는 시간이에요.'],['p:sly','준호가 내가 싫어하는 별명으로 계속 불러요.'],['think','그 별명을 들으면 기분이 나빠요.']],
+  who:'나',feel:'angry',feelAlt:['shame','sad','annoyed'],feelHint:'싫은 별명을 들으면 화나고 창피해요.',
+  q:'준호에게 어떻게 말할까요?',
+  opts:[
+   {t:'(준호를 밀친다)',ok:false,fb:'화난 마음은 이해돼요. 하지만 밀치면 다치고 내가 혼날 수 있어요.'},
+   {t:'(아무 말 없이 참는다)',ok:false,fb:'참으면 준호는 내가 싫은지 몰라요. 계속되면 선생님께 알려요.'},
+   {t:'준호야, 그 별명 싫어. 내 이름으로 불러 줘.',ok:true,fb:'싫은 것과 원하는 것을 차분하게 말했어요.'}],
+  hint:'"그 별명 싫어" + "내 이름으로 불러 줘"',model:'준호야, 그 별명 싫어. 내 이름으로 불러 줘.'},
+ {id:'s50',lv:2,skill:'refuse',place:'공원',title:'모르는 사람이 같이 가자고 해요',
+  panels:[['think','공원에서 혼자 친구를 기다려요.'],['p:happy','모르는 어른이 "강아지 보러 같이 갈래?" 해요.'],['think','강아지는 좋지만 모르는 사람이에요.']],
+  who:'나',feel:'scared',feelAlt:['worry','surprised'],feelHint:'모르는 사람이 데려가려 하면 무서운 게 당연해요.',
+  q:'어떻게 해야 할까요?',
+  opts:[
+   {t:'강아지요? 어디 있어요?',ok:false,fb:'모르는 사람을 따라가면 위험해요. 절대 따라가지 않아요.'},
+   {t:'싫어요! (큰 소리로 말하고 사람 많은 곳으로 간다)',ok:true,fb:'위험할 때의 약속을 지켰어요. 그다음 꼭 어른께 알려요.'},
+   {t:'(조용히 따라간다)',ok:false,fb:'모르는 사람은 아무리 친절해도 따라가지 않아요.'}],
+  hint:'"싫어요!" → 자리 옮기기 → 어른께 알리기',model:'싫어요! 안 가요.'},
+ {id:'s51',lv:2,skill:'feel',place:'집',title:'내가 안 했는데 혼났어요',
+  panels:[['home','거실 꽃병이 깨져 있어요.'],['p:angry','엄마가 내가 깼다고 생각하고 화를 내세요.'],['think','사실은 고양이가 떨어뜨렸어요.']],
+  who:'나',feel:'unfair',feelAlt:['sad','angry'],feelHint:'하지 않은 일로 혼나면 억울하고 속상해요.',
+  q:'엄마께 어떻게 말할까요?',
+  opts:[
+   {t:'왜 맨날 나만 혼내!',ok:false,fb:'억울한 마음은 당연해요. 그런데 소리치면 엄마가 내 말을 듣기 어려워요.'},
+   {t:'엄마, 제가 안 그랬어요. 고양이가 떨어뜨리는 걸 봤어요.',ok:true,fb:'차분하게 사실을 말했어요.'},
+   {t:'(울면서 방으로 들어간다)',ok:false,fb:'속상할 수 있어요. 마음이 진정되면 무슨 일이 있었는지 말해 봐요.'}],
+  hint:'"제가 안 그랬어요" + 본 것 말하기',model:'엄마, 제가 안 그랬어요. 고양이가 떨어뜨리는 걸 봤어요.'},
+ {id:'s52',lv:2,skill:'sorry',place:'온라인',title:'친구 사진을 허락 없이 올렸어요',
+  panels:[['phone','재밌는 친구 사진을 단톡방에 올렸어요.'],['p:angry','서아가 "그거 지워 줘, 싫어" 해요.'],['think','서아는 화가 난 것 같아요.']],
+  who:'서아',feel:'angry',feelAlt:['shame','sad'],feelHint:'내 사진이 허락 없이 올라가면 화나고 창피해요.',
+  q:'서아에게 어떻게 할까요?',
+  opts:[
+   {t:'재밌잖아, 왜 그래?',ok:false,fb:'나에게는 재밌어도 서아에게는 싫을 수 있어요.'},
+   {t:'(말없이 지우기만 한다)',ok:false,fb:'지운 건 잘했어요. "미안해"까지 말하면 서아 마음이 풀려요.'},
+   {t:'미안해. 바로 지울게. 다음엔 꼭 물어볼게.',ok:true,fb:'사과하고, 고치고, 다음 약속까지 했어요.'}],
+  hint:'"미안해" + 바로 지우기 + 다음 약속',model:'미안해. 바로 지울게. 다음엔 꼭 물어볼게.'},
+ {id:'s53',lv:2,skill:'refuse',place:'카페 실습',title:'실습 중에 휴대폰을 하재요',
+  panels:[['cafe','카페 실습 시간이에요.'],['p:sly','같이 실습하는 친구가 "몰래 휴대폰 하자" 해요.'],['think','지금은 일하는 시간이에요.']],
+  who:'나',feel:'worry',feelAlt:['annoyed'],feelHint:'친구 부탁을 거절하기는 조마조마해요.',
+  q:'친구에게 어떻게 말할까요?',
+  opts:[
+   {t:'미안, 지금은 일하는 시간이야. 쉬는 시간에 하자.',ok:true,fb:'일터의 약속을 지키며 부드럽게 거절했어요.'},
+   {t:'(같이 몰래 휴대폰을 본다)',ok:false,fb:'일하는 시간에 휴대폰을 하면 일을 잘 못 하고 혼날 수 있어요.'},
+   {t:'선생님한테 이를 거야!',ok:false,fb:'거절은 했지만 친구가 기분 나쁠 수 있어요. 먼저 내 생각을 말해 봐요.'}],
+  hint:'"미안" + 지금은 안 되는 이유 + "나중에 하자"',model:'미안, 지금은 일하는 시간이야. 쉬는 시간에 하자.'},
+ {id:'s54',lv:2,skill:'feel',place:'버스',title:'옆 사람 음악 소리가 너무 커요',
+  panels:[['bus','버스를 타고 가요.'],['p:neutral','옆 사람 이어폰 소리가 너무 크게 들려요.'],['think','시끄러워서 머리가 아파요.']],
+  who:'나',feel:'annoyed',feelAlt:['angry','worry'],feelHint:'큰 소리가 계속 들리면 짜증 나고 힘들어요.',
+  q:'어떻게 하면 좋을까요?',
+  opts:[
+   {t:'죄송한데, 소리를 조금 줄여 주실 수 있어요?',ok:true,fb:'공손하게 원하는 것을 부탁했어요.'},
+   {t:'(빈자리로 옮겨 앉는다)',ok:true,fb:'말하기 어려우면 자리를 옮기는 것도 좋은 방법이에요.'},
+   {t:'아, 시끄러워!',ok:false,fb:'짜증 난 마음은 이해돼요. 하지만 상대가 기분 나빠 다툼이 될 수 있어요.'}],
+  hint:'"죄송한데" + "줄여 주실 수 있어요?" 또는 자리 옮기기',model:'죄송한데, 소리를 조금 줄여 주실 수 있어요?'},
+ {id:'s55',lv:2,skill:'refuse',place:'온라인',title:'모르는 사람이 만나자고 해요',
+  panels:[['phone','게임에서 친해진 사람이 있어요.'],['phone','"토요일에 둘이 만나자. 부모님한텐 말하지 마." 해요.'],['think','얼굴도 모르는 사람이에요.']],
+  who:'나',feel:'scared',feelAlt:['worry','surprised'],feelHint:'비밀로 만나자는 말은 이상한 신호예요. 무서운 게 당연해요.',
+  q:'어떻게 해야 할까요?',
+  opts:[
+   {t:'좋아, 어디서 만날까?',ok:false,fb:'온라인에서만 아는 사람을 혼자 만나면 위험해요.'},
+   {t:'(답장하지 않고 부모님께 메시지를 보여 드린다)',ok:true,fb:'위험할 때의 약속을 지켰어요. 비밀로 하라는 말은 꼭 어른께 알려요.'},
+   {t:'알겠어, 부모님께 말 안 할게.',ok:false,fb:'"비밀로 해"라는 말이 나오면 더욱 어른께 알려야 해요.'}],
+  hint:'답장하지 않기 → 차단 → 어른께 보여 드리기',model:'(답장하지 않고) 엄마, 이 메시지 좀 보세요.'},
+ {id:'s56',lv:2,skill:'sorry',place:'도서관',title:'빌린 책을 찢었어요',
+  panels:[['book','도서관에서 빌린 책을 읽었어요.'],['think','실수로 한 장이 찢어졌어요.'],['p:neutral','사서 선생님께 책을 돌려드려야 해요.']],
+  who:'나',feel:'worry',feelAlt:['sorry','shame'],feelHint:'실수를 하면 걱정되고 미안한 마음이 들어요.',
+  q:'사서 선생님께 어떻게 말할까요?',
+  opts:[
+   {t:'(찢어진 부분을 숨기고 반납한다)',ok:false,fb:'다음 사람이 곤란해져요. 솔직하게 말하는 게 용기예요.'},
+   {t:'원래 찢어져 있었어요.',ok:false,fb:'거짓말을 하면 나중에 더 곤란해져요.'},
+   {t:'죄송해요. 실수로 찢어졌어요. 어떻게 하면 될까요?',ok:true,fb:'솔직하게 사과하고 해결 방법을 물었어요.'}],
+  hint:'"죄송해요" + 무슨 일인지 + "어떻게 하면 될까요?"',model:'죄송해요. 실수로 찢어졌어요. 어떻게 하면 될까요?'},
+ {id:'s57',lv:2,skill:'feel',place:'운동장',title:'친구들이 나만 빼고 놀아요',
+  panels:[['think','점심시간, 친구들이 축구를 해요.'],['p:neutral','"인원 다 찼어" 하며 나만 끼워 주지 않아요.'],['think','나도 같이 하고 싶어요.']],
+  who:'나',feel:'lonely',feelAlt:['sad','disappointed','angry'],feelHint:'나만 빠지면 외롭고 서운해요.',
+  q:'친구들에게 어떻게 말할까요?',
+  opts:[
+   {t:'치사해! 너희랑 안 놀아!',ok:false,fb:'서운한 마음은 이해돼요. 하지만 이렇게 말하면 다음에도 같이 놀기 어려워요.'},
+   {t:'나도 같이 하고 싶어. 다음 판에 끼워 줄래?',ok:true,fb:'내 마음과 원하는 것을 분명하게 말했어요.'},
+   {t:'(혼자 교실로 들어가 버린다)',ok:false,fb:'친구들은 내가 하고 싶은지 모를 수 있어요. 말해 봐요.'}],
+  hint:'"나도 하고 싶어" + "다음에 끼워 줄래?"',model:'나도 같이 하고 싶어. 다음 판에 끼워 줄래?'},
+ {id:'s58',lv:2,skill:'refuse',place:'편의점',title:'몰래 가져가자고 해요',
+  panels:[['store','친구와 편의점에 왔어요.'],['p:sly','친구가 "젤리 하나 그냥 주머니에 넣어" 해요.'],['think','돈을 안 내고 가져가는 건 도둑질이에요.']],
+  who:'나',feel:'worry',feelAlt:['scared','annoyed'],feelHint:'나쁜 일을 하자고 하면 걱정되고 무서울 수 있어요.',
+  q:'친구에게 어떻게 말할까요?',
+  opts:[
+   {t:'(망설이다가 주머니에 넣는다)',ok:false,fb:'도둑질은 절대 안 돼요. 친구가 시켜도 내가 책임지게 돼요.'},
+   {t:'안 돼. 그건 도둑질이야. 나는 돈 내고 살래.',ok:true,fb:'분명하게 거절하고 내 선택을 말했어요.'},
+   {t:'(아무 말 없이 먼저 나간다)',ok:false,fb:'피한 건 좋아요. 분명히 말해 주면 친구도 멈출 수 있어요.'}],
+  hint:'"안 돼" + 이유 + 내 선택',model:'안 돼. 그건 도둑질이야. 나는 돈 내고 살래.'},
+ {id:'s59',lv:2,skill:'sorry',place:'교실',title:'친구 말을 중간에 끊었어요',
+  panels:[['desk','모둠 활동 시간이에요.'],['p:sad','수빈이가 말하는데 내가 중간에 끼어들었어요.'],['think','수빈이 표정이 어두워졌어요.']],
+  who:'수빈',feel:'sad',feelAlt:['annoyed','disappointed'],feelHint:'수빈이 얼굴을 봐요. 말이 끊기면 서운하고 속상해요.',
+  q:'수빈이에게 어떻게 할까요?',
+  opts:[
+   {t:'(계속 내 이야기를 한다)',ok:false,fb:'수빈이는 더 서운할 거예요. 수빈이 표정을 봐요.'},
+   {t:'미안, 내가 말을 끊었네. 계속 말해 줘.',ok:true,fb:'실수를 알아채고 사과한 뒤 기회를 돌려줬어요.'},
+   {t:'내 말이 더 중요해.',ok:false,fb:'모둠에서는 모두의 말이 중요해요.'}],
+  hint:'"미안" + "계속 말해 줘"',model:'미안, 내가 말을 끊었네. 계속 말해 줘.'},
+ {id:'s60',lv:3,skill:'empathy',place:'교실',title:'친구가 시험을 망쳤대요',
+  panels:[['desk','시험 점수가 나왔어요.'],['p:down','태윤이가 점수를 보고 책상에 엎드렸어요.'],['think','태윤이는 열심히 공부했어요.']],
+  who:'태윤',feel:'disappointed',feelAlt:['sad','shame'],feelHint:'열심히 했는데 결과가 안 좋으면 실망하고 속상해요.',
+  q:'태윤이에게 어떻게 할까요?',
+  opts:[
+   {t:'태윤아, 열심히 했잖아. 다음엔 같이 공부할래?',ok:true,fb:'태윤이 마음을 알아주고 함께하자고 했어요.'},
+   {t:'나는 90점인데!',ok:false,fb:'태윤이는 더 속상할 수 있어요. 친구 마음을 먼저 생각해요.'},
+   {t:'(태윤이 시험지를 몰래 본다)',ok:false,fb:'태윤이는 점수를 보여 주고 싶지 않을 수 있어요.'}],
+  hint:'노력 알아주기 + 함께하자고 말하기',model:'태윤아, 열심히 했잖아. 다음엔 같이 공부할래?'},
+ {id:'s61',lv:3,skill:'start',place:'교실',title:'전학 온 친구를 도와줘요',
+  panels:[['desk','우리 반에 새 친구 민서가 왔어요.'],['alone','민서가 쉬는 시간에 혼자 두리번거려요.'],['think','화장실이 어딘지 모르는 것 같아요.']],
+  who:'민서',feel:'worry',feelAlt:['lonely','shame'],feelHint:'새 학교에서는 모르는 게 많아 걱정되고 외로워요.',
+  q:'민서에게 어떻게 할까요?',
+  opts:[
+   {t:'(다른 친구가 도와주겠지 하고 기다린다)',ok:false,fb:'모두 그렇게 생각하면 민서는 혼자 남아요. 내가 먼저 해 봐요.'},
+   {t:'민서야, 내가 학교 구경시켜 줄까?',ok:true,fb:'친구의 마음을 알아채고 먼저 다가갔어요.'},
+   {t:'(민서를 보며 웃어 보인다)',ok:false,fb:'웃음도 좋은 시작이에요. 한마디 더 걸어 볼까요?'}],
+  hint:'친구 이름 + "내가 도와줄까?"',model:'민서야, 내가 학교 구경시켜 줄까?'},
+ {id:'s62',lv:3,skill:'solve',place:'운동장',title:'두 친구가 다퉈요',
+  panels:[['think','쉬는 시간이에요.'],['p:angry','지후와 하윤이가 공 때문에 다투고 있어요.'],['think','둘 다 내 친구예요.']],
+  who:'나',feel:'worry',feelAlt:['annoyed','scared'],feelHint:'친구들이 다투면 걱정되고 불안해요.',
+  q:'어떻게 하면 좋을까요?',
+  opts:[
+   {t:'둘 다 화났구나. 공을 번갈아 쓰면 어때?',ok:true,fb:'두 친구 마음을 알아주고 해결 방법을 말했어요.'},
+   {t:'지후가 잘못했어!',ok:false,fb:'한 친구 편만 들면 다툼이 커질 수 있어요.'},
+   {t:'(선생님께 가서 도와 달라고 한다)',ok:true,fb:'다툼이 커질 것 같으면 어른께 도움을 청하는 것도 좋은 방법이에요.'}],
+  hint:'두 사람 마음 알아주기 + 방법 제안하기',model:'둘 다 화났구나. 공을 번갈아 쓰면 어때?'},
+ {id:'s63',lv:3,skill:'empathy',place:'온라인',title:'단톡방에서 친구를 놀려요',
+  panels:[['phone','반 단톡방이 시끄러워요.'],['phone','친구들이 은우 사진에 놀리는 말을 계속 달아요.'],['think','은우는 아무 말도 안 해요.']],
+  who:'은우',feel:'shame',feelAlt:['sad','lonely','angry'],feelHint:'여럿이 놀리면 창피하고 혼자인 것 같아요.',
+  q:'어떻게 하면 좋을까요?',
+  opts:[
+   {t:'(웃는 이모티콘을 보낸다)',ok:false,fb:'이모티콘 하나도 놀리기에 함께하는 거예요.'},
+   {t:'이런 말 그만하자. 은우가 속상하겠다.',ok:true,fb:'용기 있게 멈추자고 말했어요.'},
+   {t:'(은우에게 따로 "괜찮아? 선생님께 같이 말할까?" 보낸다)',ok:true,fb:'은우 마음을 살피고 도움을 청할 방법을 제안했어요.'}],
+  hint:'멈추자고 말하기, 친구에게 따로 마음 묻기',model:'이런 말 그만하자. 은우가 속상하겠다.'},
+ {id:'s64',lv:3,skill:'solve',place:'동아리실',title:'게임 규칙이 서로 달라요',
+  panels:[['think','동아리에서 보드게임을 해요.'],['p:angry','서준이는 규칙이 다르다며 내 차례가 아니래요.'],['think','나는 설명서에서 다르게 읽었어요.']],
+  who:'나',feel:'annoyed',feelAlt:['unfair','angry'],feelHint:'생각이 다르면 답답하고 억울할 수 있어요.',
+  q:'서준이에게 어떻게 말할까요?',
+  opts:[
+   {t:'내 말이 맞아. 네가 틀렸어.',ok:false,fb:'서준이도 자기가 맞다고 생각해요. 같이 확인해 봐요.'},
+   {t:'(게임판을 엎는다)',ok:false,fb:'모두의 게임이 망가져요. 화날 땐 숨을 크게 쉬어요.'},
+   {t:'그럼 설명서를 같이 다시 읽어 보자.',ok:true,fb:'둘 다 납득할 수 있는 방법을 제안했어요.'}],
+  hint:'같이 확인하는 방법 제안하기',model:'그럼 설명서를 같이 다시 읽어 보자.'},
+ {id:'s65',lv:3,skill:'start',place:'버스',title:'같은 반 친구를 버스에서 만났어요',
+  panels:[['bus','버스를 탔어요.'],['p:happy','같은 반 하은이가 옆자리에 앉았어요.'],['think','아직 이야기해 본 적이 없어요.']],
+  who:'나',feel:'worry',feelAlt:['excited','shame'],feelHint:'처음 말을 걸 때는 떨리고 설레요.',
+  q:'하은이에게 어떻게 할까요?',
+  opts:[
+   {t:'안녕! 너도 이 버스 타는구나. 어디서 내려?',ok:true,fb:'인사하고 공통점을 말한 뒤 질문까지 했어요.'},
+   {t:'(창밖만 본다)',ok:false,fb:'친해질 기회예요. 인사부터 해 볼까요?'},
+   {t:'(손을 흔들며 웃는다)',ok:false,fb:'좋은 시작이에요! 한마디를 더하면 대화가 시작돼요.'}],
+  hint:'인사 + 공통점 + 질문',model:'안녕! 너도 이 버스 타는구나. 어디서 내려?'},
+ {id:'s66',lv:3,skill:'empathy',place:'집',title:'엄마가 속상한 일이 있었대요',
+  panels:[['home','저녁에 엄마가 회사에서 돌아오셨어요.'],['p:down','엄마가 소파에 앉아 한숨을 쉬세요.'],['think','오늘 속상한 일이 있었대요.']],
+  who:'엄마',feel:'sad',feelAlt:['disappointed','worry','annoyed'],feelHint:'엄마 얼굴과 한숨을 봐요. 힘든 일이 있으면 속상해요.',
+  q:'엄마께 어떻게 할까요?',
+  opts:[
+   {t:'엄마, 배고파요. 밥 언제 먹어요?',ok:false,fb:'배고플 수 있어요. 그런데 먼저 엄마 마음을 살펴볼까요?'},
+   {t:'(방에 들어가 게임을 한다)',ok:false,fb:'엄마는 혼자 더 힘드실 수 있어요.'},
+   {t:'엄마, 오늘 힘드셨어요? 제가 물 갖다 드릴게요.',ok:true,fb:'엄마 마음을 알아주고 행동으로 도왔어요.'}],
+  hint:'"힘드셨어요?" + 내가 할 수 있는 일',model:'엄마, 오늘 힘드셨어요? 제가 물 갖다 드릴게요.'},
+ {id:'s67',lv:3,skill:'solve',place:'카페 실습',title:'손님이 주문이 틀렸대요',
+  panels:[['cafe','카페 실습 중이에요.'],['p:angry','손님이 "저 차가운 거 시켰는데요" 하며 화를 내요.'],['think','내가 따뜻한 음료를 만들었어요.']],
+  who:'나',feel:'worry',feelAlt:['scared','shame','sorry'],feelHint:'실수해서 손님이 화를 내면 걱정되고 무서울 수 있어요.',
+  q:'손님께 어떻게 말할까요?',
+  opts:[
+   {t:'죄송합니다. 바로 다시 만들어 드릴게요.',ok:true,fb:'사과하고 해결 방법을 바로 말했어요. 일터에서 꼭 필요한 말이에요.'},
+   {t:'손님이 따뜻한 거라고 하셨어요.',ok:false,fb:'따지면 손님이 더 화가 날 수 있어요. 먼저 사과해요.'},
+   {t:'(아무 말 없이 선배 뒤로 숨는다)',ok:false,fb:'무서울 수 있어요. 어려우면 "선배님, 도와주세요"라고 말해요.'}],
+  hint:'"죄송합니다" + 해결 방법',model:'죄송합니다. 바로 다시 만들어 드릴게요.'},
+ {id:'s68',lv:3,skill:'start',place:'체육관',title:'짝을 정해야 해요',
+  panels:[['think','체육 시간에 두 명씩 짝을 지어요.'],['alone','나만 아직 짝이 없어요.'],['p:neutral','저쪽에 짝이 없는 윤호가 있어요.']],
+  who:'나',feel:'worry',feelAlt:['lonely','shame'],feelHint:'짝이 없으면 걱정되고 외로워요.',
+  q:'어떻게 하면 좋을까요?',
+  opts:[
+   {t:'(선생님이 정해 줄 때까지 가만히 있는다)',ok:false,fb:'기다려도 되지만, 내가 먼저 말하면 더 빨리 짝이 생겨요.'},
+   {t:'윤호야, 나랑 짝 할래?',ok:true,fb:'먼저 다가가 같이 하자고 했어요.'},
+   {t:'저는 혼자 할게요.',ok:false,fb:'짝 활동은 둘이 해야 해요. 윤호도 짝을 기다리고 있어요.'}],
+  hint:'친구 이름 + "나랑 짝 할래?"',model:'윤호야, 나랑 짝 할래?'},
+ {id:'s69',lv:3,skill:'empathy',place:'교실',title:'친구가 발표하다 실수했어요',
+  panels:[['desk','발표 시간이에요.'],['p:surprised','지아가 발표하다 말이 막혀 얼굴이 빨개졌어요.'],['think','몇몇 친구들이 킥킥 웃어요.']],
+  who:'지아',feel:'shame',feelAlt:['worry','sad'],feelHint:'지아 얼굴이 빨개졌어요. 모두 앞에서 실수하면 창피해요.',
+  q:'지아를 위해 어떻게 할까요?',
+  opts:[
+   {t:'(같이 킥킥 웃는다)',ok:false,fb:'지아는 더 창피해질 거예요.'},
+   {t:'(지아를 보며 고개를 끄덕여 응원한다)',ok:true,fb:'몸짓으로 응원했어요. 지아에게 큰 힘이 돼요.'},
+   {t:'(발표가 끝나고) 지아야, 끝까지 해서 멋졌어.',ok:true,fb:'실수보다 끝까지 한 용기를 알아줬어요.'}],
+  hint:'응원하는 몸짓이나 말',model:'지아야, 끝까지 해서 멋졌어.'},
+ {id:'s70',lv:3,skill:'solve',place:'교실',title:'모둠 친구가 아무것도 안 해요',
+  panels:[['desk','모둠 포스터를 만들어요.'],['p:neutral','현우는 휴대폰만 보고 아무것도 안 해요.'],['think','마감 시간이 다가와요.']],
+  who:'나',feel:'annoyed',feelAlt:['unfair','angry','worry'],feelHint:'나만 일하는 것 같으면 억울하고 짜증 나요.',
+  q:'현우에게 어떻게 말할까요?',
+  opts:[
+   {t:'너 때문에 다 망했어!',ok:false,fb:'화난 마음은 이해돼요. 하지만 현우가 더 안 하고 싶어질 수 있어요.'},
+   {t:'(현우 몫까지 혼자 다 한다)',ok:false,fb:'혼자 다 하면 힘들고 억울해요. 같이 하자고 말해 봐요.'},
+   {t:'현우야, 색칠을 맡아 줄 수 있어? 같이 하면 빨리 끝나.',ok:true,fb:'할 일을 구체적으로 나누어 부탁했어요.'}],
+  hint:'할 일을 정해서 부탁하기',model:'현우야, 색칠을 맡아 줄 수 있어? 같이 하면 빨리 끝나.'},
+ {id:'s71',lv:3,skill:'empathy',place:'급식실',title:'친구가 못 먹는 반찬이 나왔어요',
+  panels:[['food','오늘 반찬은 땅콩 조림이에요.'],['p:sad','땅콩 알레르기가 있는 서진이가 식판을 보며 시무룩해요.'],['think','서진이는 먹을 게 별로 없어요.']],
+  who:'서진',feel:'disappointed',feelAlt:['sad','annoyed'],feelHint:'먹고 싶어도 못 먹으면 실망하고 속상해요.',
+  q:'서진이에게 어떻게 할까요?',
+  opts:[
+   {t:'맛있는데 왜 안 먹어?',ok:false,fb:'서진이는 먹고 싶어도 몸이 아플 수 있어서 못 먹어요.'},
+   {t:'서진아, 아쉽겠다. 다음엔 네가 좋아하는 반찬 나오면 좋겠다.',ok:true,fb:'서진이 마음을 알아주는 말을 했어요.'},
+   {t:'(신경 쓰지 않고 내 밥만 먹는다)',ok:false,fb:'서진이는 혼자 아쉬울 수 있어요. 한마디 건네 볼까요?'}],
+  hint:'"아쉽겠다" 하고 마음 알아주기',model:'서진아, 아쉽겠다. 다음엔 네가 좋아하는 반찬 나오면 좋겠다.'},
+ {id:'s72',lv:3,skill:'start',place:'온라인',title:'새 단톡방에 처음 인사해요',
+  panels:[['phone','새로 들어간 동아리 단톡방에 초대됐어요.'],['phone','다들 인사를 나누고 있어요.'],['think','나도 인사하고 싶어요.']],
+  who:'나',feel:'worry',feelAlt:['excited','shame'],feelHint:'새로운 곳에 인사할 때는 설레고 떨려요.',
+  q:'어떻게 인사할까요?',
+  opts:[
+   {t:'(아무 말 없이 읽기만 한다)',ok:false,fb:'친구들은 내가 들어온 줄 모를 수 있어요.'},
+   {t:'ㅎㅇ',ok:false,fb:'처음엔 조금 더 자세히 인사하면 친구들이 나를 알 수 있어요.'},
+   {t:'안녕! 이번에 들어온 ○○이야. 잘 부탁해!',ok:true,fb:'이름을 알리고 반갑게 인사했어요.'}],
+  hint:'인사 + 내 이름 + "잘 부탁해"',model:'안녕! 이번에 들어온 ○○이야. 잘 부탁해!'}
+];
+SCEN.forEach((s,i)=>s.no=i+1);
+
+const AAC = [
+ {cat:'people',name:'사람',words:['저는','선생님','친구야','엄마','우리']},
+ {cat:'verb',name:'하는 말',words:['도와주세요','주세요','기다려 주세요','그만해 주세요','같이 해요','싫어요','쉬고 싶어요']},
+ {cat:'desc',name:'느낌',words:['기뻐요','편안해요','걱정돼요','속상해요','화나요','아파요','괜찮아요']},
+ {cat:'social',name:'인사·예절',words:['안녕','고마워요','미안해요','잠깐만요','다시 말해 주세요']},
+ {cat:'noun',name:'물건·장소',words:['물','화장실','보건실','이거','쉬는 시간','집']}
+];
+const MAXSTU = 7;
+/* 혼자 연습 미션: 차시별 게임 카드와 혼자 풀 카드 (첫 장은 게임에서 해본 카드) */
+const MISSIONS = {
+  1:{title:'필요한 것을 말해요', game:['s1','s3','s11'], cards:['s1','s2','s16'], extra:[]},
+  2:{title:'싫은 것을 말하고 나를 지켜요', game:['s4','s6','s10','s15'], cards:['s15','s13','s18'], extra:['s9','s14']},
+  3:{title:'친구 마음을 읽고 함께해요', game:['s5','s8','s12'], cards:['s12','s7','s17'], extra:[]}
+};
+function today0(){const d=new Date();d.setHours(0,0,0,0);return d.getTime()}
+function soloDone(m,stu){return new Set(S.log.filter(r=>r.t==='scen'&&r.solo===m&&(r.stu||'')===(stu||'')&&r.ts>=today0()).map(r=>r.id))}
+function goal(){const n=Math.max(1,S.students.length);return n===1?10:n===2?15:n<=4?20:30}
+function mode(){const n=S.students.length;return n<=1?'solo':n===2?'pair':n<=4?'each':'team'}
+
+/* ---------- 상태 ---------- */
+const store = {
+  get(k,d){try{const v=localStorage.getItem('mt_'+k);return v?JSON.parse(v):d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem('mt_'+k,JSON.stringify(v))}catch(e){}}
+};
+function sampleLog(){
+  const now=Date.now(),D=864e5;
+  const rows=[
+   ['s1',1,0,'ind',4],['s2',1,0,'ind',4],['s3',2,0,'part',3],['s4',3,1,'full',3],['s4',2,1,'part',2],
+   ['s5',1,0,'part',2],['s6',3,2,'full',1],['s6',2,1,'part',1],['s7',2,1,'full',1],['s1',1,0,'ind',0]];
+  const who=['도윤','서연','민호'];
+  return rows.map(([id,tries,help,lv,ago],i)=>({t:'scen',id,tries,help,lv,stu:who[i%3],ts:now-ago*D-i*600000,sample:true}));
+}
+function sampleCheck(){
+  const now=Date.now(),D=864e5;
+  return [['calm',2,4,'도윤'],['worry',4,3,'서연'],['joy',3,2,'도윤'],['angry',5,0,'민호']].map(([e,l,a,stu])=>({e,l,why:[],stu,ts:now-a*D-3600000,sample:true}));
+}
+let S = {
+  tab:'checkin',
+  coins: store.get('coins',12),
+  log: store.get('log',null) || sampleLog(),
+  checks: store.get('checks',null) || sampleCheck(),
+  students: store.get('students',['도윤','서연','민호']),
+  cur: null,
+  filter: '전체',
+  sound: store.get('sound',true),
+  autoRead: store.get('autoRead',false),
+  ciMore:false,
+  solo: store.get('solo',0),
+  showAll:false,
+  level:0,
+  ci:{e:null,l:null,why:[]},
+  play:null,
+  strip:[]
+};
+function save(){store.set('coins',S.coins);store.set('log',S.log);store.set('checks',S.checks);store.set('students',S.students);store.set('sound',S.sound);store.set('autoRead',S.autoRead);store.set('solo',S.solo)}
+
+/* ---------- 공통 ---------- */
+const $=s=>document.querySelector(s);
+const view=$('#view');
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function speak(t){
+  if(!S.sound) return;
+  try{ if('speechSynthesis' in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t.replace(/\(.*?\)/g,''));u.lang='ko-KR';u.rate=.85;speechSynthesis.speak(u);} }catch(e){}
+}
+const SPK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 9c1.5 1.5 1.5 4.5 0 6M18.5 6.5c3 3 3 8 0 11"/></svg>';
+const MUTE='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>';
+function autoSpeak(t){if(S.autoRead)speak(t)}
+function spkBtn(t,label='읽어주기'){return `<button class="speak" data-say="${esc(t)}">${SPK}${label}</button>`}
+let toastT;
+function toast(m){const el=$('#toast');el.textContent=m;el.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>el.hidden=true,2200)}
+function addCoin(n,msg){
+  S.coins+=n;save();renderCoins();
+  const c=$('#coinNum');c.classList.remove('pop');void c.offsetWidth;c.classList.add('pop');
+  if(msg) toast(msg);
+  if(S.coins-n<goal()&&S.coins>=goal()) setTimeout(()=>toast(`마음 코인 ${goal()}개! 동네 축제가 열렸어요`),2300);
+}
+function renderCoins(){
+  $('#coinNum').textContent=S.coins;
+  $('#goalBar').style.width=Math.min(100,S.coins/goal()*100)+'%';
+  $('#goalTxt').textContent=`동네 축제까지 ${Math.min(S.coins,goal())}/${goal()}`;
+  const b=$('#soundBtn');b.innerHTML=S.sound?SPK.replace('<svg','<svg width="22" height="22"'):MUTE;b.setAttribute('aria-pressed',S.sound);
+}
+function fmt(ts){const d=new Date(ts);return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`}
+const DAYS=['일','월','화','수','목','금','토'];
+
+function whoPicker(label){
+  if(S.students.length<2) return '';
+  return `<div class="who"><h3>${label}</h3><div class="chips">${S.students.map(n=>`<button class="chip who-chip" data-stu="${esc(n)}" aria-pressed="${S.cur===n}">${esc(n)}</button>`).join('')}</div></div>`;
+}
+function curStu(){return S.students.length<2?(S.students[0]||'나'):S.cur}
+const HOW=['소리 내어','선생님께 귓속말','짝꿍에게만','말 카드 내밀기','몸짓으로'];
+const HOT=['angry','sad','worry','scared','unfair','shame','annoyed','lonely','disappointed'];
+/* ---------- 탭: 오늘 기분 ---------- */
+function vCheckin(){
+  const c=S.ci;
+  const recent=S.checks.filter(r=>!curStu()||!r.stu||r.stu===curStu()).slice(-5);
+  return `
+  <section class="card" style="display:grid;gap:18px">
+    ${whoPicker('누구의 기분이에요?')}
+    <div style="display:grid;gap:4px"><h2>오늘 기분은 어때요?</h2><p class="lead">얼굴을 하나 골라요. ${spkBtn('오늘 기분은 어때요? 얼굴을 하나 골라요.')}</p></div>
+    <div class="faces">${(S.ciMore||EMO_MORE.includes(c.e)?[...EMO_BASIC,...EMO_MORE]:EMO_BASIC).map(k=>`<button class="face-btn" data-ci-e="${k}" aria-pressed="${c.e===k}">${face(k)}<b>${EMO[k].name}</b></button>`).join('')}</div>
+    ${S.ciMore||EMO_MORE.includes(c.e)?'':'<div><button class="chip" id="ciMore">감정 더 보기 (고마워요, 설레요, 무서워요 …)</button></div>'}
+    ${c.e?`
+    <div style="display:grid;gap:10px"><h3>얼마나 ${EMO[c.e].name.replace('요','')}요? <span class="lead" style="font-family:var(--body);font-size:15px">감정 온도계</span></h3>
+      <div class="thermo">${[1,2,3,4,5].map(n=>`<button data-ci-l="${n}" aria-pressed="${c.l===n}">${n}<small>${['조금','','보통','','아주 많이'][n-1]}</small></button>`).join('')}</div></div>
+    <div style="display:grid;gap:10px"><h3>왜 그런지 골라도 돼요 <span class="tag">선택</span></h3>
+      <div class="chips">${['친구','가족','공부','몸 상태','잠','날씨','잘 모르겠어요'].map(w=>`<button class="chip" data-ci-w="${w}" aria-pressed="${c.why.includes(w)}">${w}</button>`).join('')}</div></div>
+    ${c.l>=4&&HOT.includes(c.e)?`<div class="calm-box"><b>마음이 많이 힘들구나. 말해줘서 고마워요.</b>
+      <p>지금 해볼 수 있는 것을 골라요.</p>
+      <div class="chips"><span class="chip static">숨 크게 3번 쉬기</span><span class="chip static">물 한 모금 마시기</span><span class="chip static">조용한 자리에서 1분</span><span class="chip static">선생님께 이야기하기</span></div>
+      <p class="lead" style="font-size:14px">기록하면 선생님 화면에 '마음 살피기'로 알려드려요.</p></div>`:''}
+    <div class="row"><button class="btn" id="ciSave" ${c.l&&curStu()?'':'disabled'}>기분 기록하기</button>
+      <span class="lead">${!curStu()?'위에서 이름을 먼저 골라요':c.l?`"저는 오늘 ${c.l>=4?'아주 ':''}${EMO[c.e].name}${c.why.length&&!c.why.includes('잘 모르겠어요')?' ('+c.why.join(', ')+' 때문에)':''}"`:'온도계 숫자를 골라요'}</span></div>`:''}
+  </section>
+  <section class="card" style="display:grid;gap:12px">
+    <div class="row" style="justify-content:space-between"><h3>${curStu()?esc(curStu())+'의 ':''}최근 기분</h3>${recent.some(r=>r.sample)?'<span class="tag">예시 기록 포함</span>':''}</div>
+    <div class="week">${recent.map(r=>`<div class="day">${DAYS[new Date(r.ts).getDay()]}요일${face(r.e)}<b>${EMO[r.e].name}</b>온도 ${r.l}</div>`).join('')}</div>
+  </section>`;
+}
+
+/* ---------- 탭: 상황 연습 ---------- */
+function vMission(){
+  const m=MISSIONS[S.solo], stu=curStu(), done=soloDone(S.solo,stu);
+  const n=m.cards.filter(id=>done.has(id)).length, all=n===m.cards.length;
+  const card=(id,i,extra)=>{const sc=SCEN.find(x=>x.id===id), ok=done.has(id);
+    return `<button class="mcard ${ok?'ok':''}" data-scen="${id}" ${stu?'':'disabled'}>
+      <span class="cardno big2">${sc.no}</span>
+      <span class="mtxt"><b>${sc.title}</b><small>${i===0&&!extra?'게임에서 해본 카드 · ':''}${sc.place} · ${SKILLS[sc.skill]}</small></span>
+      <span class="mstate">${ok?'✓ 해냈어요':(extra?'더 도전':'도전!')}</span></button>`};
+  return `
+  <section class="card mission" style="display:grid;gap:18px">
+    <div style="display:grid;gap:6px"><span class="tag" style="justify-self:start">혼자 연습 · ${S.solo}차시</span>
+      <h2>오늘의 미션: 카드 ${m.cards.length}장</h2><p class="lead">${m.title} · 하나씩 눌러서 혼자 풀어 봐요. 어려우면 도움 카드를 써도 괜찮아요.</p></div>
+    ${S.students.length>1?whoPicker('내 이름을 골라요'):''}
+    <div class="stamps">${m.cards.map((id,i)=>`<div class="stamp ${done.has(id)?'on':''}"><span>${done.has(id)?'참 잘했어요':(i+1)}</span></div>`).join('')}</div>
+    <div class="mlist">${m.cards.map((id,i)=>card(id,i,false)).join('')}</div>
+    ${all?`<div class="fb ok"><b>미션 완료! 정말 잘했어요.</b><p>선생님께 도장 화면을 보여 드려요.</p></div>
+      ${m.extra.length?`<h3>시간이 남으면 더 도전해요</h3><div class="mlist">${m.extra.map((id,i)=>card(id,i,true)).join('')}</div>`:''}`:''}
+    ${!stu?'<p class="notice">먼저 내 이름을 골라요.</p>':''}
+    <div><button class="chip" id="showAll">카드 전체 보기</button></div>
+  </section>`;
+}
+function vPractice(){
+  if(S.play) return vPlay();
+  if(S.solo&&MISSIONS[S.solo]&&!S.showAll) return vMission();
+  const doneIds=new Set(S.log.filter(r=>r.t==='scen'&&!r.sample).map(r=>r.id));
+  const list=SCEN.filter(s=>!S.level||s.lv===S.level);
+  const everIds=new Set(S.log.filter(r=>r.t==='scen'&&!r.sample).map(r=>r.id));
+  const lvCount=lv=>{const a=SCEN.filter(x=>x.lv===lv);return `${a.filter(x=>everIds.has(x.id)).length}/${a.length}`};
+  return `
+  <section style="display:grid;gap:14px">
+    <div class="row" style="justify-content:space-between">
+      ${S.solo?'<div style="flex-basis:100%"><button class="chip" id="backMission">← 오늘의 미션으로</button></div>':''}
+      <div><h2>상황 연습</h2><p class="lead">카드를 골라 연습을 시작해요. 지금 ${S.students.length||1}명 · ${({solo:'선생님과 짝꿍',pair:'둘이서 번갈아',each:'각자 말 1개',team:'2~3명씩 팀'})[mode()]} · 목표 코인 ${goal()}개</p></div>
+      <div class="levels"><button class="chip" id="newGame">새 판 시작</button>${[[0,'전체'],[1,'1단계'],[2,'2단계'],[3,'3단계']].map(([v,t])=>`<button class="chip" data-lv="${v}" aria-pressed="${S.level===v}">${t}</button>`).join('')}</div>
+    </div>
+    <div class="card numpad-card"><div><h3>보드게임 카드 번호로 열기</h3><p class="lead" style="font-size:15px">카드의 QR 코드를 찍거나, 카드 왼쪽 위 번호를 눌러요.</p></div>
+      <div class="numpad">${SCEN.map(s=>`<button data-scen="${s.id}" data-card="1" aria-label="카드 ${s.no}번">${s.no}</button>`).join('')}</div></div>
+    <div class="card numpad-card"><div><h3>안 해 본 카드 뽑기</h3><p class="lead" style="font-size:15px">이 태블릿에서 아직 연습하지 않은 카드를 하나 골라 줘요. 여러 번 해도 새로운 상황을 만나요. 우리 반이 해 본 카드 ${everIds.size}/${SCEN.length}</p></div>
+      <div class="row" style="flex-wrap:wrap;gap:8px">${[1,2,3].map(lv=>`<button class="chip" data-draw="${lv}">${lv}단계에서 뽑기 <span class="lead" style="font-size:13px">${lvCount(lv)}</span></button>`).join('')}</div></div>
+    <div class="scen-grid">${list.map(s=>`
+      <button class="scen" data-scen="${s.id}">
+        <div class="meta"><span class="cardno">${s.no}</span><span class="lv lv${s.lv}">${s.lv}단계</span><span class="tag">${SKILLS[s.skill]}</span><span class="tag">${s.place}</span></div>
+        <h3>${s.title}</h3><p>${s.panels[0][1]}</p>
+        ${doneIds.has(s.id)?'<span class="done-mark">✓ 오늘 연습했어요</span>':everIds.has(s.id)?'<span class="done-mark" style="opacity:.7">✓ 해 본 카드</span>':''}
+      </button>`).join('')}</div>
+  </section>`;
+}
+function startScen(id,fromCard){
+  const s=SCEN.find(x=>x.id===id); if(!s) return;
+  S.tab='practice';
+  const ask=S.students.length>1&&(fromCard||!S.cur);
+  S.play={s,fromCard:!!fromCard,step:ask?'who':'story',feelTried:[],feelMsg:null,feelOwn:null,tried:[],sayMsg:null,wrong:0,help:0,showHint:false,tries:0};
+  render(); if(ask) autoSpeak('누구 차례예요? 이름을 눌러요.'); else autoSpeak(s.title+'. '+s.panels.map(p=>p[1]).join(' '));
+}
+function vPlay(){
+  const P=S.play,s=P.s;
+  const stepNames=[['story','이야기 보기'],['feel','기분 알아보기'],['say','말 고르기'],['done','말해보기']];
+  const idx=stepNames.findIndex(x=>x[0]===P.step);
+  let body='';
+  const help = (P.step==='feel'||P.step==='say')?`<button class="btn ghost" id="helpBtn">${P.help?'도움 카드를 썼어요':'도움 카드 쓰기'}</button>`:'';
+  const hintBox = P.showHint?`<div class="hint"><b>힌트</b> · ${P.step==='feel'?s.feelHint:s.hint} ${spkBtn(P.step==='feel'?s.feelHint:s.hint,'')}</div>`:'';
+  if(P.step==='story'){
+    body=`<div class="row"><button class="btn" id="toFeel">다 봤어요</button>${spkBtn(s.panels.map(p=>p[1]).join(' '),'전체 읽어주기')}</div>`;
+  }
+  if(P.step==='feel'){
+    const ownNote = s.who==='나'?'<p class="lead" style="font-size:15px">내 기분에는 정답이 없어요. 내 마음과 가장 가까운 얼굴을 골라요.</p>':'';
+    const whoTxt=s.who==='나'?'이럴 때 나는':`${s.who}의 기분은`;
+    body=`<div class="q">${whoTxt} 어떤 기분일까요? ${spkBtn(whoTxt+' 어떤 기분일까요?','')}</div>
+      ${ownNote}<div class="faces">${[...EMO_BASIC,...EMO_MORE].map(k=>`<button class="face-btn" data-feel="${k}" aria-pressed="false" ${P.feelTried.includes(k)?'style="opacity:.4"':''}>${face(k)}<b>${EMO[k].name}</b></button>`).join('')}</div>
+      ${P.feelMsg?`<div class="fb retry"><b>그럴 수도 있어요.</b><p>${esc(s.who)}의 얼굴과 행동을 다시 보고 한 번 더 골라볼까요?</p></div>`:''}
+      ${hintBox}<div class="row">${help}</div>`;
+  }
+  if(P.step==='say'){
+    const n=S.students.length;
+    const vote = S.solo?`<div class="vote-note"><div><b>혼자 해 봐요</b><p>천천히 읽고 골라요. 어려우면 도움 카드를 눌러요.</p></div></div>`
+      : n>=3?`<div class="vote-note"><div><b>모두 답하기</b><p>친구들도 가·나·다 카드를 준비해요. 신호에 맞춰 다 같이 들어요.</p></div><button class="btn sun" id="countBtn">셋, 둘, 하나!</button></div>`
+      : n===1?`<div class="vote-note"><div><b>선생님과 함께</b><p>선생님도 가·나·다 카드를 들어요. 같은 답을 골랐을까요?</p></div><button class="btn sun" id="countBtn">셋, 둘, 하나!</button></div>`
+      : `<div class="vote-note"><div><b>짝꿍 코치</b><p>친구는 정답 대신 "힌트" 한마디를 해줄 수 있어요.</p></div></div>`;
+    body=`${vote}<div class="q">${s.q} ${spkBtn(s.q,'')}</div>
+      <div class="opts">${s.opts.map((o,i)=>`<button class="opt ${P.tried.includes(i)?'tried':''}" data-opt="${i}"><span class="k">${'가나다'[i]}</span><span>${esc(o.t)}</span></button>`).join('')}</div>
+      ${P.sayMsg!=null?`<div class="fb retry"><b>그렇게 말하면 어떻게 될까요?</b><p>${s.opts[P.sayMsg].fb}</p></div>`:''}
+      ${hintBox}<div class="row">${help}${spkBtn(s.opts.map((o,i)=>'가나다'[i]+'. '+o.t).join(' '),'보기 모두 읽어주기')}</div>`;
+  }
+  if(P.step==='who'){
+    return `<section class="card back-card">
+      <span class="cardno big">${s.no}</span>
+      <h2>누구 차례예요?</h2>
+      <p class="lead">이름을 누르면 ${s.no}번 카드가 시작돼요.</p>
+      <div class="chips" style="justify-content:center">${S.students.map(n=>`<button class="chip who-chip big" data-stu="${esc(n)}">${esc(n)}</button>`).join('')}</div>
+      <div class="row" style="justify-content:center"><button class="btn ghost" id="backList" style="min-height:48px;font-size:17px">← 목록</button></div>
+    </section>`;
+  }
+  if(P.step==='stamp'){
+    const m=MISSIONS[S.solo], done=soloDone(S.solo,curStu()), k=m.cards.filter(id=>done.has(id)).length;
+    return `<section class="card back-card">
+      <div class="stamp on big"><span>참 잘했어요</span></div>
+      <h2>${s.no}번 카드 해냈어요!</h2>
+      <p class="q" style="font-size:22px">미션 ${Math.min(k,m.cards.length)} / ${m.cards.length}</p>
+      <p class="lead">${k>=m.cards.length?'미션을 모두 끝냈어요. 선생님께 보여 드려요!':'다음 카드도 혼자 해 봐요.'}</p>
+      <div class="row" style="justify-content:center"><button class="btn" id="backList">${k>=m.cards.length?'미션 화면 보기':'다음 미션'}</button></div>
+    </section>`;
+  }
+  if(P.step==='back'){
+    return `<section class="card back-card">
+      <span class="cardno big">${s.no}</span>
+      <h2>${s.no}번 카드 성공!</h2>
+      <div class="back-coins">${Array.from({length:P.earned},()=>'<span class="coin pop">+1</span>').join('')}</div>
+      <p class="q" style="font-size:22px">게임판으로 돌아가서<br>마음 코인 ${P.earned}개를 받아요.</p>
+      ${P.help?'<p class="lead">도움 카드를 쓴 코인 1개가 포함됐어요.</p>':''}
+      <p class="lead">${S.students.length<=1?'선생님이 "좋았던 점" 하나를 말해줘요.':S.students.length===2?'짝꿍이 "좋았던 점" 하나를 말해줘요.':'다 같이 가·나·다 카드를 들었다면 팀 코인 1개를 더 올려요.'}</p>
+      <div class="row" style="justify-content:center"><button class="btn" id="backList">다음 카드 기다리기</button></div>
+    </section>`;
+  }
+  if(P.step==='done'){
+    const right=s.opts[P.chosen??s.opts.findIndex(o=>o.ok)];
+    const other=s.opts.filter((o,i)=>o.ok&&i!==P.chosen);
+    body=`<div class="fb ok"><b>잘했어요!</b><p>${right.fb}</p>${other.length?`<p style="font-size:15px">이렇게 해도 좋아요: ${other.map(o=>esc(o.t)).join(' / ')}</p>`:''}</div>
+      <div style="display:grid;gap:8px"><h3>이제 직접 말해봐요</h3><p class="lead">말로 해도, 말 카드를 내밀어도, 몸짓으로 해도 좋아요.</p></div>
+      <div class="model">${esc(s.model)}</div>
+      <div class="row">${spkBtn(s.model,'따라 들어보기')}</div>
+      <div style="display:grid;gap:8px"><h3 style="font-size:19px">어떻게 말해볼까요? <span class="tag">내가 골라요</span></h3>
+      <div class="chips how">${HOW.map(h=>`<button class="chip" data-how="${h}" aria-pressed="${P.how===h}">${h}</button>`).join('')}</div></div>
+      ${S.solo&&!P.fromCard?`<div class="row"><button class="btn" data-plv="auto">다 했어요! 도장 받기</button></div>`:`<div style="display:grid;gap:8px"><h3 style="font-size:17px;font-family:var(--body);font-weight:500;color:var(--muted)">선생님이 눌러요 · 오늘 어떻게 해냈나요? <span class="tag">코인은 똑같이 1개</span></h3>
+      <div class="prompt-lv">
+        <button data-plv="ind"><b>혼자 했어요</b>독립 수행</button>
+        <button data-plv="part"><b>조금 도와줬어요</b>부분 촉구</button>
+        <button data-plv="full"><b>같이 했어요</b>전체 촉구</button>
+      </div></div>`}`;
+  }
+  return `
+  <section class="card" style="display:grid;gap:18px">
+    <div class="row" style="justify-content:space-between">
+      <div class="row"><button class="btn ghost" id="backList" style="min-height:44px;font-size:17px">← 목록</button>${curStu()?`<span class="tag" style="font-size:15px">${esc(curStu())} 차례</span>`:''}</div>
+      <div class="steps">${stepNames.map(([k,t],i)=>`<span class="${i===idx?'on':''}">${i+1}. ${t}</span>`).join('')}</div>
+    </div>
+    <div style="display:grid;gap:4px"><div class="meta row"><span class="cardno">${s.no}</span><span class="lv lv${s.lv}">${s.lv}단계</span><span class="tag">${SKILLS[s.skill]}</span><span class="tag">${s.place}</span></div><h2>${s.title}</h2></div>
+    <div class="comic">${s.panels.map((p,i)=>`<div class="frame"><span class="n">${i+1}</span><div class="pic">${pic(p[0])}</div><p>${p[1]}</p>${spkBtn(p[1],'')}</div>`).join('')}</div>
+    ${body}
+  </section>`;
+}
+function onFeel(k){
+  const P=S.play,s=P.s;
+  if(s.who==='나'){ // 내 기분에는 정답이 없어요
+    const same = k===s.feel || (s.feelAlt||[]).includes(k);
+    P.step='say';P.showHint=false;render();
+    toast(same?`맞아요, ${EMO[k].name}`:`${EMO[k].name}. 그렇게 느낄 수 있어요`);
+    if(!same) setTimeout(()=>toast(`이럴 때 ${EMO[s.feel].name} 친구도 많아요`),2300);
+    autoSpeak((same?'맞아요. ':'그렇게 느낄 수 있어요. ')+s.q); return;
+  }
+  const ok = k===s.feel || (s.feelAlt||[]).includes(k);
+  if(ok){P.step='say';P.feelMsg=null;P.showHint=false;render();toast(`맞아요, ${EMO[k].name}`);autoSpeak(s.q);}
+  else{ if(!P.feelTried.includes(k))P.feelTried.push(k); P.feelMsg=true; if(P.feelTried.length>=2)P.showHint=true; render(); autoSpeak('그럴 수도 있어요. 다시 보고 한 번 더 골라볼까요?'); }
+}
+function onOpt(i){
+  const P=S.play,s=P.s,o=s.opts[i];
+  P.tries++;
+  if(o.ok){P.chosen=i;P.step='done';P.showHint=false;render();autoSpeak('잘했어요! '+s.model);}
+  else{ if(!P.tried.includes(i))P.tried.push(i); P.sayMsg=i; P.wrong++; if(P.wrong>=2)P.showHint=true; render(); autoSpeak(o.fb); }
+}
+function onPlv(lv){
+  const P=S.play;
+  const solo=S.solo&&!P.fromCard?S.solo:0;
+  if(lv==='auto') lv=(P.tries===1&&!P.help)?'ind':'part';
+  S.log.push({t:'scen',id:P.s.id,tries:P.tries,help:P.help,lv,how:P.how||'',stu:curStu()||'',solo,ts:Date.now()});
+  save();
+  const n=1+(P.help?1:0);
+  addCoin(1,solo?'도장을 받았어요!':'끝까지 해냈어요! 마음 코인 1개');
+  if(solo){P.step='stamp';render();window.scrollTo({top:0});autoSpeak(`${P.s.no}번 카드 해냈어요!`);}
+  else if(P.fromCard){P.step='back';P.earned=n;render();window.scrollTo({top:0});autoSpeak(`${P.s.no}번 카드 성공! 게임판으로 돌아가서 마음 코인 ${n}개를 받아요.`);}
+  else{S.play=null; render();}
+}
+
+/* ---------- 탭: 말 만들기 ---------- */
+function vAAC(){
+  return `
+  <section class="card" style="display:grid;gap:14px">
+    <div><h2>말 만들기</h2><p class="lead">낱말을 차례로 누르면 문장이 돼요. 다 만들면 '말하기'를 눌러요.</p></div>
+    <div class="strip" id="strip">${S.strip.map(w=>`<span class="w c-${w.c}">${esc(w.w)}</span>`).join('')}</div>
+    <div class="row">
+      <button class="btn" id="aacSay" ${S.strip.length?'':'disabled'}>${SPK.replace('<svg','<svg width="22" height="22"')} 말하기</button>
+      <button class="btn ghost" id="aacBack" ${S.strip.length?'':'disabled'}>하나 지우기</button>
+      <button class="btn ghost" id="aacClear" ${S.strip.length?'':'disabled'}>모두 지우기</button>
+    </div>
+  </section>
+  <section class="card" style="display:grid;gap:18px">
+    ${AAC.map(g=>`<div class="aac-cat"><h3><i class="c-${g.cat}"></i>${g.name}</h3>
+      <div class="tiles">${g.words.map(w=>`<button class="tile c-${g.cat}" data-w="${esc(w)}" data-c="${g.cat}">${esc(w)}</button>`).join('')}</div></div>`).join('')}
+    <p class="lead" style="font-size:14px">색깔은 AAC에서 널리 쓰는 피츠제럴드 키 방식이에요. 사람은 노랑, 하는 말은 초록, 느낌은 파랑, 인사는 분홍, 물건과 장소는 주황.</p>
+  </section>`;
+}
+
+/* ---------- 탭: 교사용 ---------- */
+function vTeacher(){
+  const F=S.filter;
+  const recs=S.log.filter(r=>r.t==='scen'&&(F==='전체'||r.stu===F));
+  const dayAgo=Date.now()-2*864e5;
+  const care=S.checks.filter(r=>r.l>=4&&HOT.includes(r.e)&&r.ts>dayAgo&&(F==='전체'||r.stu===F)).sort((a,b)=>b.ts-a.ts);
+  const hasSample=recs.some(r=>r.sample)||S.checks.some(r=>r.sample);
+  const by={};
+  recs.forEach(r=>{const s=SCEN.find(x=>x.id===r.id);if(!s)return;const k=s.skill;(by[k]=by[k]||[]).push(r)});
+  const total=recs.length, first=recs.filter(r=>r.tries===1).length, help=recs.reduce((a,r)=>a+r.help,0), ind=recs.filter(r=>r.lv==='ind').length;
+  const lvTxt={ind:['독립 수행','p-ind'],part:['부분 촉구','p-part'],full:['전체 촉구','p-full']};
+  const rows=Object.keys(SKILLS).map(k=>{
+    const a=by[k]||[];const fr=a.length?Math.round(a.filter(r=>r.tries===1).length/a.length*100):null;
+    const last=a.length?a.slice().sort((x,y)=>y.ts-x.ts)[0].lv:null;
+    return `<tr><td class="sk">${SKILLS[k]}</td><td class="num" data-label="연습">${a.length}</td>
+      <td class="num" data-label="첫 시도">${fr==null?'–':`<span class="bar"><i style="width:${fr}%"></i></span>${fr}%`}</td>
+      <td class="num" data-label="도움 요청">${a.reduce((s,r)=>s+r.help,0)}</td>
+      <td data-label="최근 수준">${last?`<span class="pill ${lvTxt[last][1]}">${lvTxt[last][0]}</span>`:'<span class="pill p-none">기록 없음</span>'}</td></tr>`}).join('');
+  const lastLog=recs.slice().sort((a,b)=>b.ts-a.ts).slice(0,8);
+  return `
+  <section class="card" style="display:grid;gap:16px">
+    <div class="row" style="justify-content:space-between;align-items:flex-end">
+      <div><h2>교사용 기록</h2><p class="lead">IEP 소통 목표와 연결해서 보세요.</p></div>
+      <label style="display:grid;gap:4px;font-size:14px;color:var(--muted)">우리 반 학생 1~7명 (쉼표로 구분)<input type="text" id="stuList" value="${esc(S.students.join(', '))}"></label>
+    </div>
+    <div class="chips">${['전체',...S.students].map(n=>`<button class="chip" data-filter="${esc(n)}" aria-pressed="${F===n}">${esc(n)}</button>`).join('')}</div>
+    ${care.length?`<div class="care"><b>마음 살피기</b>${care.map(r=>`<div><time>${fmt(r.ts)}</time><span>${esc(r.stu||'')}</span>${face(r.e)}<span>${EMO[r.e].name} · 온도 ${r.l}</span>${r.why&&r.why.length?`<span class="lead" style="font-size:14px">${esc(r.why.join(', '))}</span>`:''}${r.sample?'<span class="tag">예시</span>':''}</div>`).join('')}</div>`:''}
+    <div class="solo-ctl"><div><b>혼자 연습 모드</b><p class="lead" style="font-size:14px">학생 태블릿에서 켜면 상황 연습 화면이 '오늘의 미션 카드 3장'으로 바뀌어요. 차시별 QR로도 켤 수 있어요.</p></div>
+      <div class="chips">${[[0,'끄기'],[1,'1차시'],[2,'2차시'],[3,'3차시']].map(([v,t])=>`<button class="chip" data-solo="${v}" aria-pressed="${S.solo===v}">${t}</button>`).join('')}</div>
+      ${S.solo?`<div class="solo-sum">${(S.students.length?S.students:['나']).map(n=>{const d=soloDone(S.solo,n),m=MISSIONS[S.solo];return `<span class="pill ${d.size>=m.cards.length?'p-ind':'p-none'}">${esc(n)} ${m.cards.filter(id=>d.has(id)).length}/${m.cards.length}</span>`}).join('')}</div>`:''}</div>
+    <div class="row"><button class="chip" id="autoReadBtn" aria-pressed="${S.autoRead}">${S.autoRead?'자동 읽기 켜짐':'자동 읽기 꺼짐 (누를 때만 읽어요)'}</button><span class="lead" style="font-size:14px">글 읽기가 어려운 학생이 있으면 켜 주세요.</span></div>
+    ${hasSample?'<p class="notice">지금 보이는 기록 중 일부는 화면 확인용 예시예요. 아래 버튼으로 지우고 실제 기록을 시작하세요.</p>':''}
+    <div class="stat-row">
+      <div class="stat"><b>${total}</b><span>연습한 상황</span></div>
+      <div class="stat"><b>${total?Math.round(first/total*100):0}%</b><span>첫 시도에 바른 말 고르기</span></div>
+      <div class="stat"><b>${help}</b><span>도움 카드 사용</span></div>
+      <div class="stat"><b>${ind}</b><span>독립 수행 횟수</span></div>
+    </div>
+  </section>
+  <section class="card" style="display:grid;gap:10px">
+    <h3>소통 기술별 수행</h3>
+    <div class="tbl-wrap"><table><thead><tr><th>기술</th><th>연습</th><th>첫 시도 성공률</th><th>도움 요청</th><th>최근 수행 수준</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <p class="lead" style="font-size:14px">도움 요청 횟수는 감점이 아니에요. 스스로 도움을 청한 것도 소통 기술로 봅니다.</p>
+  </section>
+  <section class="card" style="display:grid;gap:10px">
+    <h3>최근 활동</h3>
+    <div class="log">${lastLog.map(r=>{const s=SCEN.find(x=>x.id===r.id);return `<div><time>${fmt(r.ts)}</time><b style="font-weight:500">${esc(r.stu||'')}</b><span>${s?s.title:r.id}</span><span class="pill ${lvTxt[r.lv][1]}">${lvTxt[r.lv][0]}</span><span class="lead" style="font-size:14px">시도 ${r.tries}회 · 도움 ${r.help}회${r.how?' · '+esc(r.how):''}${r.sample?' · 예시':''}</span></div>`}).join('')||'<p class="lead">아직 기록이 없어요. 상황 연습을 하나 마치면 여기에 쌓여요.</p>'}</div>
+    <div class="row" id="resetRow"><button class="btn ghost" id="resetBtn" style="font-size:17px;min-height:48px">기록 모두 지우기</button></div>
+  </section>`;
+}
+
+/* ---------- 렌더 & 이벤트 ---------- */
+function render(){
+  document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected',t.dataset.tab===S.tab));
+  view.innerHTML = {checkin:vCheckin,practice:vPractice,aac:vAAC,teacher:vTeacher}[S.tab]();
+  renderCoins();
+}
+document.querySelector('.tabs').addEventListener('click',e=>{const b=e.target.closest('.tab');if(!b)return;S.tab=b.dataset.tab;if(S.tab!=='practice')S.play=null;render();window.scrollTo({top:0})});
+$('#soundBtn').addEventListener('click',()=>{S.sound=!S.sound;try{speechSynthesis.cancel()}catch(e){}save();renderCoins();toast(S.sound?'소리를 켰어요':'소리를 껐어요')});
+view.addEventListener('click',e=>{
+  const t=e.target.closest('button');if(!t)return;
+  const d=t.dataset;
+  if(d.say!==undefined){speak(d.say);return}
+  // 체크인
+  if(d.ciE){S.ci.e=d.ciE;S.ci.l=null;render();autoSpeak(EMO[d.ciE].name);return}
+  if(d.ciL){S.ci.l=+d.ciL;render();return}
+  if(t.id==='ciMore'){S.ciMore=true;render();return}
+  if(d.ciW){const w=S.ci.why,i=w.indexOf(d.ciW);i<0?w.push(d.ciW):w.splice(i,1);render();return}
+  if(t.id==='ciSave'){if(!curStu())return;S.checks.push({e:S.ci.e,l:S.ci.l,why:S.ci.why.slice(),stu:curStu(),ts:Date.now()});const n=EMO[S.ci.e].name;S.ci={e:null,l:null,why:[]};save();addCoin(1,`기록했어요. 오늘 ${n}`);render();return}
+  if(d.stu!==undefined){S.cur=d.stu;if(S.play&&S.play.step==='who'){S.play.step='story';render();autoSpeak(S.play.s.title+'. '+S.play.s.panels.map(p=>p[1]).join(' '));}else render();return}
+  // 연습
+  if(d.lv!==undefined){S.level=+d.lv;render();return}
+  if(d.scen){startScen(d.scen,!!d.card);return}
+  if(d.draw){const lv=+d.draw;const ever=new Set(S.log.filter(r=>r.t==='scen'&&!r.sample).map(r=>r.id));let pool=SCEN.filter(x=>x.lv===lv&&!ever.has(x.id));const all=!pool.length;if(all)pool=SCEN.filter(x=>x.lv===lv);const pick=pool[Math.floor(Math.random()*pool.length)];if(all)setTimeout(()=>toast(`${lv}단계 카드를 모두 해 봤어요! 다시 섞어서 뽑았어요`),2300);toast(`${pick.no}번 카드가 나왔어요`);startScen(pick.id,true);return}
+  if(t.id==='backList'){S.play=null;clearHash();render();return}
+  if(t.id==='toFeel'){S.play.step='feel';render();return}
+  if(t.id==='helpBtn'){if(!S.play.help){S.play.showHint=true;S.play.help++;render();addCoin(1,'도움을 요청한 것도 멋진 소통이에요');autoSpeak(S.play.step==='feel'?S.play.s.feelHint:S.play.s.hint)}return}
+  if(d.feel){onFeel(d.feel);return}
+  if(d.opt!==undefined){onOpt(+d.opt);return}
+  if(d.plv){onPlv(d.plv);return}
+  if(t.id==='newGame'){S.coins=0;save();renderCoins();toast(`새 판을 시작해요. 목표 코인 ${goal()}개`);return}
+  if(t.id==='countBtn'){speak('셋, 둘, 하나! 다 같이 들어요!');t.classList.remove('pop');void t.offsetWidth;t.classList.add('pop');return}
+  if(d.filter!==undefined){S.filter=d.filter;render();return}
+  if(d.solo!==undefined){S.solo=+d.solo;S.showAll=false;save();render();toast(S.solo?`혼자 연습 모드: ${S.solo}차시 미션`:'혼자 연습 모드를 껐어요');return}
+  if(t.id==='showAll'){S.showAll=true;render();return}
+  if(t.id==='backMission'){S.showAll=false;render();return}
+  if(d.how!==undefined){S.play.how=d.how;render();return}
+  if(t.id==='autoReadBtn'){S.autoRead=!S.autoRead;save();render();toast(S.autoRead?'자동으로 읽어줘요':'누를 때만 읽어줘요');return}
+  // AAC
+  if(d.w){S.strip.push({w:d.w,c:d.c});speak(d.w);render();return}
+  if(t.id==='aacSay'){speak(S.strip.map(x=>x.w).join(' '));return}
+  if(t.id==='aacBack'){S.strip.pop();render();return}
+  if(t.id==='aacClear'){S.strip=[];render();return}
+  // 교사
+  if(t.id==='resetBtn'){$('#resetRow').innerHTML='<span>정말 모든 기록과 코인을 지울까요?</span><button class="btn" id="resetYes" style="min-height:48px;font-size:17px">네, 지울게요</button><button class="btn ghost" id="resetNo" style="min-height:48px;font-size:17px">취소</button>';return}
+  if(t.id==='resetYes'){S.log=[];S.checks=[];S.coins=0;S.filter='전체';save();render();toast('기록을 모두 지웠어요');return}
+  if(t.id==='resetNo'){render();return}
+});
+view.addEventListener('change',e=>{if(e.target.id==='stuList'){S.students=e.target.value.split(/[,，]/).map(x=>x.trim()).filter(Boolean).slice(0,MAXSTU);if(e.target.value.split(/[,，]/).filter(x=>x.trim()).length>MAXSTU)setTimeout(()=>toast('학생은 최대 7명까지 넣을 수 있어요'),2300);if(!S.students.includes(S.cur))S.cur=null;if(S.filter!=='전체'&&!S.students.includes(S.filter))S.filter='전체';save();render();toast('학생 명단을 저장했어요')}});
+function clearHash(){try{if(location.hash)history.replaceState(null,'',location.pathname+location.search)}catch(e){}}
+function fromHash(){const h=(location.hash||'').slice(1);
+  const sm=/^solo([123])$/.exec(h);
+  if(sm){S.solo=+sm[1];S.showAll=false;S.play=null;S.tab='practice';save();render();window.scrollTo({top:0});setTimeout(()=>toast(`${S.solo}차시 혼자 연습 미션을 시작해요`),300);return true}if(/^s\d{1,2}$/.test(h)&&SCEN.some(x=>x.id===h)){startScen(h,true);window.scrollTo({top:0});return true}return false}
+window.addEventListener('hashchange',fromHash);
+if(!fromHash()) render();
+</script>
